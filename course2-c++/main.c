@@ -3,10 +3,17 @@
 #include <stdio.h>
 #include <windows.h>
 #include <stdbool.h>
+#include <string.h>
 
 // main function
 
+int execution(int *i){
+    (*i)++;
+    return *i;
+}
+
 int main(){
+    
 
     printf("Ciao Gabriele!\n");
     printf("Ciao per 2!");
@@ -35,6 +42,45 @@ int main(){
     double pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089; //ca 20 cifre decimali
 
     printf("\nPI: %.1000f, dimensione: %d", pi, sizeof(pi));
+    
+
+    int vector[10] = {0,1,2,3,4,5,6,7,8,9};
+
+    double* pointer2 = &pi;
+
+    printf("Pointer: %p", pointer2);
+
+    
+
+    printf("\nIncremented: %d", execution(&i));
+
+    //input
+    char array[5];
+    printf("\nInput: ");
+    fgets(array, sizeof(array) + 1, stdin);
+    //gets(array);
+    //scanf("%s", array);
+    printf("\nIl tuo input: %s", array);
+
+    //files
+    FILE *file;
+    const char* file_name = "test.txt";
+
+    file = fopen(file_name, "w");
+
+    
+
+    if (file != NULL){
+        fprintf(file, "Articolo,Quantità,Prezzo\n", file_name);
+        fprintf(file, "%s,%s,%s\n", file_name, file_name, file_name);
+        fclose(file);
+    }
+    else{
+        printf("Error reading file %p", file);
+    }
+
+
+
     return 0;
 
 }
