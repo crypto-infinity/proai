@@ -1,2 +1,0 @@
-Articolo,Quantità,Prezzo
-test.txt,test.txt,test.txt

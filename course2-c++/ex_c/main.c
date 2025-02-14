@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <stdbool.h>
 #include <string.h>
+#include <typeinfo.h>
 
 // main function
 
@@ -78,9 +79,7 @@ int main(){
     else{
         printf("Error reading file %p", file);
     }
-
-
-
+    
     return 0;
 
 }
