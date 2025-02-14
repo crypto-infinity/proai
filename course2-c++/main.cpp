@@ -1,7 +1,14 @@
 #include <bits/stdc++.h>
+using namespace std;
 
 namespace Math
 {
+
+    struct complex{
+        string nome;
+        string cognome;
+    };
+
     int i = 3;
     string name = "Paul";
 
@@ -9,9 +16,18 @@ namespace Math
         i++;
     }
     
+    void print_with_cout(){
+        cout << "Hello There!";
+    }
+
+    complex print_struct(){
+        struct complex struct1;
+        struct1.nome = "Hello There";
+        return struct1;
+    }
 }
 
-using namespace std;
+
 using namespace Math;
 
 int main(){
