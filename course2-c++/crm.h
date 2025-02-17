@@ -1,0 +1,46 @@
+/*
+CRM 
+
+*/
+
+#pragma region includes
+#ifndef __CRM_H_INCLUDED__
+#define __CRM_H_INCLUDED__
+
+
+#include <bits/stdc++.h>
+#include "client.h"
+#include "interaction.h"
+
+using namespace std;
+#pragma endregion includes
+
+#pragma region interfaces
+class CRM {
+    private:
+        vector<Client> clients;
+        vector<Interaction> interactions;
+    
+    public:
+        //Client Management
+        void add_client(const Client& client);
+        void view_clients() const;
+        Client* search_client(const string& client_id);
+        void update_client(const string& client_id, const Client& updated_client);
+        void delete_client(const string& client_id);
+    
+        //Interaction Management
+        void add_interaction(const Interaction& interaction);
+        void view_interactions(const string& client_id) const;
+        Interaction* search_interaction(const string& interaction_id);
+        void update_interaction(const string& interaction_id, const Interaction& updated_interaction);
+        void delete_interaction(const string& interaction_id);
+    
+        // Methods for Data Saving and Loading
+        void save_data(const string& file_name) const;
+        void load_data(const string& file_name);
+    };
+
+#pragma endregion interfaces
+
+#endif 
