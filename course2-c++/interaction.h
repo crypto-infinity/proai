@@ -15,8 +15,10 @@ using namespace std;
 
 #pragma region interfaces
 class Interaction {
+
     private:
-        string interaction_id;
+    
+        string id;
         string type; // Appointment or Contract
         string date;
         string description;

@@ -22,6 +22,9 @@ namespace InsuraPro{
             string address;
             string email;
             string phone;
+
+            /// @brief Constant for the CSV Delimiter
+            const char DELIMITER = ',';
         
         public:
             Client(string _id, string _name, string _surname, string _address, string _email, string _phone){
@@ -118,17 +121,17 @@ namespace InsuraPro{
             */
 
             /// @brief Compare Operator for the Client Class
-            /// @param client Client
+            /// @param Client Client
             /// @return bool
-            bool operator==(const Client& client) const{
-                return id == client.id;
+            bool operator==(const Client& Client) const{
+                return id == Client.id;
             };
 
             /// @brief Overloaded Operator for the Client Class
-            /// @param client Client
+            /// @param Client Client
             /// @return bool
-            bool operator!=(const Client& client) const{
-                return id != client.id;
+            bool operator!=(const Client& Client) const{
+                return id != Client.id;
             };
 
             //Object string representation
@@ -136,7 +139,13 @@ namespace InsuraPro{
             /// @brief String Representation of the Client Object
             /// @return string
             string to_string() const{
-                return "Cliente ID: " + id + ",Nome: " + name + ",Cognome: " + surname + ",Indirizzo: " + address + ",Email: " + email + ",Telefono: " + phone;
+                return "Cliente ID: " + id + ". Nome: " + name + ", Cognome: " + surname + ", Indirizzo: " + address + ", Email: " + email + ", Telefono: " + phone;
+            };
+
+            /// @brief CSV Representation of the Client Object
+            /// @return string
+            string to_csv() const{
+                return id + DELIMITER + name + DELIMITER + surname + DELIMITER + address + DELIMITER + email + DELIMITER + phone;
             };
         };
 }
