@@ -16,31 +16,37 @@ using namespace std;
 #pragma endregion includes
 
 #pragma region interfaces
-class CRM {
-    private:
-        vector<Client> clients;
-        vector<Interaction> interactions;
-    
-    public:
-        //Client Management
-        void add_client(const Client& client);
-        void view_clients() const;
-        Client* search_client(const string& client_id);
-        void update_client(const string& client_id, const Client& updated_client);
-        void delete_client(const string& client_id);
-    
-        //Interaction Management
-        void add_interaction(const Interaction& interaction);
-        void view_interactions(const string& client_id) const;
-        Interaction* search_interaction(const string& interaction_id);
-        void update_interaction(const string& interaction_id, const Interaction& updated_interaction);
-        void delete_interaction(const string& interaction_id);
-    
-        // Methods for Data Saving and Loading
-        void save_data(const string& file_name) const;
-        void load_data(const string& file_name);
-    };
+namespace InsuraPro {
+    /// @brief CRM Class, represents the CRM program with custom methods for client/interaction manipulation.
+    class CRM {
+        private:
+            /// @brief A list of clients in the CRM, represented as a vector of Client objects.
+            vector<Client> clients;
+            /// @brief A list of interactions in the CRM, represented as a vector of Interaction objects.
+            vector<Interaction> interactions;
+        
+        public:
+            // Client Management Methods
+            void add_client(const Client& client);
+            void view_clients() const;
+            Client* search_client(const string& client_id);
+            void update_client(const string& client_id, const Client& updated_client);
+            void delete_client(const string& client_id);
+        
+            // Interaction Management Methods
+            void add_interaction(const Interaction& interaction);
+            void view_interactions(const string& client_id) const;
+            Interaction* search_interaction(const string& interaction_id);
+            void update_interaction(const string& interaction_id, const Interaction& updated_interaction);
+            void delete_interaction(const string& interaction_id);
+        
+            // Data Saving and Loading Methods
+            void save_data(const string& file_name) const;
+            void load_data(const string& file_name);
+        };
+}
+
 
 #pragma endregion interfaces
 
-#endif 
+#endif
