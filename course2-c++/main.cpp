@@ -7,10 +7,7 @@
 // includes each class header file
 #include "crm.h"
 
-#include "rapidcsv.h"
-
 using namespace std;
-using namespace rapidcsv;
 using namespace InsuraPro;
 
 #pragma endregion includes
@@ -48,7 +45,7 @@ int main(){
     try
     {
         cout << "Benvenuto nel sistema CRM avanzato di InsuraPro!" << endl;
-        InsuraPro::Utility::show_help();
+        Utility::show_help();
         
         while(cmd != "chiudi" || cmd != "8"){
             cout << "\nCosa vuoi fare? (\"supporto\" o \"1\" per mostrare tutte le funzioni): ";
@@ -57,7 +54,7 @@ int main(){
             switch (cmd_inputs[cmd])
             {
             case 1:
-                InsuraPro::Utility::show_help();
+                Utility::show_help();
                 break;
             case 2:
                 //crm->add_client();
@@ -82,7 +79,7 @@ int main(){
                 break;
             default:
                 cout << "\nComando non riconosciuto." << endl;
-                InsuraPro::Utility::show_help();
+                Utility::show_help();
                 break;
             }
         }
@@ -109,7 +106,7 @@ int main(){
     }
     */
     
-    //cout << Contacte->to_csv() << endl;
+    //cout << Contact->to_csv() << endl;
 
     // try{
     //     Document doc("contacts.csv", LabelParams(0, 0));

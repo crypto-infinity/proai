@@ -7,18 +7,14 @@ This class represents the Contact object with custom methods for manipulation.
 
 #include <bits/stdc++.h>
 #include <regex>
-#include <cctype>
-#include <climits>
-#include <iomanip>
-#include <iostream>
+
 #include "utility.h"
-#include <ctype.h>
 
 using namespace std;
 
 #pragma endregion includes
 
-#pragma region definitions
+#pragma region Contact
 namespace InsuraPro{
     /// @brief Contact Class Definition, represents the Contact object with custom methods for manipulation.
     class Contact : Utility
@@ -181,4 +177,4 @@ namespace InsuraPro{
             };
         };
 }
-#pragma endregion definitions
+#pragma endregion Contact

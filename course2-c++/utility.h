@@ -10,6 +10,8 @@ This class represents the Client object with custom methods for manipulation.
 
 #include <bits/stdc++.h>
 
+#include "rapidcsv.h"
+
 using namespace std;
 
 #pragma endregion includes
@@ -19,7 +21,7 @@ namespace InsuraPro{
 
     /// @brief Utility Class Definition, represents the Client object with custom methods for manipulation.
     class Utility{
-        public:
+        protected:
             /// @brief Constant for the CSV Delimiter
             const char DELIMITER = ',';
 
@@ -31,7 +33,8 @@ namespace InsuraPro{
             string phone_regex = R"(^\+(?:[0-9] ?){6,14}[0-9]$)";
             const regex PHONE_REGEX{phone_regex};
 
-            /// @brief Random string generator, source: https://medium.com/@ryan_forrester_/c-random-string-generation-practical-guide-e7e789b348d4
+            /// @brief Random string generator
+            /// @source: https://medium.com/@ryan_forrester_/c-random-string-generation-practical-guide-e7e789b348d4
             /// @param length random string lenght (int)
             /// @return the generated random string
             static string generate_random_string(size_t length) {
@@ -48,6 +51,7 @@ namespace InsuraPro{
                 return random_string;
             }
 
+        public:
             /// @brief Show an help menu with all possible commands.
             static void show_help(){
                 cout << "\nI comandi disponibili sono i seguenti:\n";
