@@ -7,6 +7,8 @@ This class represents the Client object with custom methods for manipulation.
 
 #include <bits/stdc++.h>
 
+#include "utility.h"
+
 using namespace std;
 
 #pragma endregion includes
@@ -14,7 +16,7 @@ using namespace std;
 #pragma region definitions
 namespace InsuraPro{
     /// @brief Client Class Definition, represents the Client object with custom methods for manipulation. 
-    class Client {
+    class Client : Utility {
         private:
             string id;
             string name;

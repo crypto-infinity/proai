@@ -11,6 +11,7 @@ CRM
 #include <bits/stdc++.h>
 #include "client.h"
 #include "interaction.h"
+#include "contact.h"
 
 using namespace std;
 #pragma endregion includes
@@ -24,7 +25,7 @@ namespace InsuraPro {
         private:
 
             /// @brief A list of clients in the CRM, represented as a vector of Client objects.
-            vector<Client> clients;
+            vector<InsuraPro::Client> clients;
 
             /// @brief A list of interactions in the CRM, represented as a vector of Interaction objects.
             vector<Interaction> interactions;
