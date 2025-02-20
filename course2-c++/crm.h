@@ -101,10 +101,59 @@ namespace InsuraPro {
                 }
             };
 
-            /// @brief Converts a CSV line into a Client Object.
-            /// @param csv_line the CSV line parsed from a file to convert.
-            /// @return a pointer to the Client object created.
-            Client* csv_to_client(string csv_line);
+            /// @brief Converts a std::string id into a Contact Object, fetched from CSV.
+            /// @param id the id parsed from file.
+            /// @return a pointer to the Contact object created, or null if it's not found.
+            Contact* csv_id_to_contact(string id){
+                try{
+                    if(contacts.GetRow<string>(id).size() != 0){
+                        return new Contact
+                        (   
+                            contacts.GetCell<string>("name", id), 
+                            contacts.GetCell<string>("surname", id), 
+                            contacts.GetCell<string>("address", id), 
+                            contacts.GetCell<string>("email", id), 
+                            contacts.GetCell<string>("phone", id)
+                        );
+                    }else{
+                        return NULL;
+                    }
+
+                }
+                catch(exception& e){
+                    cout << "Errore nella conversione del contatto: " << e.what() << endl;
+                    return NULL;
+                }
+            };
+
+            // /// @brief Converts a CSV line into a Client Object.
+            // /// @param csv_line the CSV line parsed from a file to convert.
+            // /// @return a pointer to the Client object created.
+            // Client* csv_to_client(string csv_line){
+            //     stringstream sstream(csv_line);
+            //     rapidcsv::Document doc(sstream, rapidcsv::LabelParams(0, 0));
+            //     try{
+            //         string contact_ids_csv = doc.GetCell<string>("contacts", 0);
+            //         vector<string> contacts_ids_string;
+            //         boost::erase_all(contact_ids_csv, "["); //[ctc-1;ctc-2] > ctc1;ctc-2
+            //         boost::erase_all(contact_ids_csv, "]"); //[ctc-1;ctc-2] > ctc1;ctc-2
+            //         boost::split(contacts_ids_string,contact_ids_csv,boost::is_any_of(";"));
+            //         int test;
+
+            //         return new Client
+            //                         (   
+            //                             doc.GetCell<string>("name", 0), 
+            //                             doc.GetCell<string>("address", 0), 
+            //                             doc.GetCell<string>("vat", 0), 
+            //                             doc.GetCell<string>("company_email", 0), 
+            //                             doc.GetCell<string>("company_phone", 0)
+            //                         );
+            //     }
+            //     catch(exception& e){
+            //         cout << "Errore nella conversione del cliente: " << e.what() << endl;
+            //         return NULL;
+            //     }
+            // };
 
             /// @brief Converts a CSV line into an Interaction Object.
             /// @param csv_line the CSV line parsed from a file to convert.

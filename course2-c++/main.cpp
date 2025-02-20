@@ -47,7 +47,7 @@ int main(){
         cout << "Benvenuto nel sistema CRM avanzato di InsuraPro!" << endl;
         Utility::show_help();
         
-        while(cmd != "chiudi" || cmd != "8"){
+        while(cmd != "chiudi"){
             cout << "\nCosa vuoi fare? (\"supporto\" o \"1\" per mostrare tutte le funzioni): ";
             cin >> cmd;
 
@@ -133,3 +133,10 @@ int main(){
     //     cout << text << endl;
     //     i++;
     // }
+
+
+
+/*
+REferenze
+https://stackoverflow.com/questions/20326356/how-to-remove-all-the-occurrences-of-a-char-in-c-string
+*/
