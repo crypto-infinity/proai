@@ -62,7 +62,8 @@ namespace InsuraPro{
                 cout << "5. 'elimina_cliente' : elimina un cliente presente nel CRM.\n";
                 cout << "6. 'interazione' : aggiungi un'interazione ad un cliente presente nel CRM.\n";
                 cout << "7. 'mostra_interazioni' : visualizza l'elenco delle interazioni di un cliente presente nel CRM.\n";
-                cout << "8. 'chiudi' : chiudi il programma.\n";
+                cout << "8. 'cerca_interazioni' : cerca un'interazione per tipo o data.\n";
+                cout << "9. 'chiudi' : chiudi il programma.\n";
             }
 
     };

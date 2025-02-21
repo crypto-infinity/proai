@@ -9,9 +9,7 @@ CRM
 
 #include <bits/stdc++.h>
 
-#include "client.h"
-#include "interaction.h"
-#include "contact.h"
+#include "input.h"
 
 using namespace std;
 #pragma endregion includes
@@ -20,18 +18,18 @@ using namespace std;
 namespace InsuraPro {
 
     /// @brief CRM Class, represents the CRM program with custom methods for client/interaction manipulation.
-    class CRM : Utility {
+    class CRM : Utility, Input {
 
         private:
 
             /// @brief Client file path
-            const string CLIENTS_FILE = "clients.csv";
+            const string CLIENTS_FILE = "./clients.csv";
 
             /// @brief Interactions file path
-            const string INTERACTIONS_FILE = "interactions.csv";
+            const string INTERACTIONS_FILE = "./interactions.csv";
 
             /// @brief Contacts file path
-            const string CONTACTS_FILE = "contacts.csv";
+            const string CONTACTS_FILE = "./contacts.csv";
 
             /// @brief A list of clients in the CRM, streamed from a CSV file.
             rapidcsv::Document clients;
@@ -47,18 +45,78 @@ namespace InsuraPro {
             // Constructor
             CRM(){
                 try{
+                    contacts = rapidcsv::Document(CONTACTS_FILE, rapidcsv::LabelParams(0, 0));
                     clients = rapidcsv::Document(CLIENTS_FILE, rapidcsv::LabelParams(0, 0));
                     interactions = rapidcsv::Document(INTERACTIONS_FILE, rapidcsv::LabelParams(0, 0));
-                    contacts = rapidcsv::Document(CONTACTS_FILE, rapidcsv::LabelParams(0, 0));
                 }
                 catch(exception& e){
                     cout << "Errore nella lettura dei file: " << e.what() << endl;
                 }
             };
 
+            #pragma region Getters
+            //Getters
+
+            /// @brief Getter Method for Contact CSV rapidcsv::document
+            /// @return rapidcsv::Document
+            rapidcsv::Document& get_contacts(){
+                return contacts;
+            };
+
+            /// @brief Getter Method for Client CSV rapidcsv::document
+            /// @return rapidcsv::Document
+            rapidcsv::Document& get_clients(){
+                return clients;
+            };
+
+            /// @brief Getter Method for Interaction CSV rapidcsv::document
+            /// @return rapidcsv::Document
+            rapidcsv::Document& get_interactions(){
+                return interactions;
+            };
+
+            #pragma endregion Getters
+
             // Client Management Methods
 
-            void add_client(const Client& client);
+            /// @brief Adds a new client to the CRM. Handles user input.
+            /// @return bool, true if the client was added successfully, false otherwise.
+            /// @throws exception if an error occurs.
+            /// @see get_client_input for user input.
+            bool add_client(){
+                try{
+                    vector<Client*>* clients_to_add = get_client_input();
+
+                    string ack;
+
+                    cout << "Vuoi davvero aggiungere " << clients_to_add->size() << " clienti nel CRM? (si/no)" << endl;
+
+                    getline(cin, ack);
+                    while(ack != "si" && ack != "no"){
+                        cout << "Comando non valido.";
+                        cout << "Vuoi davvero aggiungere " << clients_to_add->size() << " clienti nel CRM? (si/no): ";
+                        getline(cin, ack);
+                    }
+
+                    if(ack == "si"){
+                        for(Client* client : *clients_to_add){
+                            clients.InsertRow<string>(clients.GetRowCount(), {client->get_name(), client->get_address(), client->get_vat(), client->get_company_email(), client->get_company_phone(), client->get_contact_ids_as_string()}, client->get_id());
+                        }
+
+                        clients.Save();
+                        cout << "Aggiunti con successo!" << endl;
+                        return true;
+                    }else{
+                        cout << "Operazione annullata." << endl;
+                        return false;
+                    }
+                }
+                catch(exception& e){
+                    cout << "Errore nell'aggiunta del cliente: " << e.what() << endl;
+                    return false;
+                }
+            };
+
             void view_clients() const;
             void update_client(const string& client_id, const Client& updated_client);
             void delete_client(const string& client_id);

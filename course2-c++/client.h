@@ -27,20 +27,22 @@ namespace InsuraPro{
             string company_phone;
 
             vector<string> contact_ids;
+            vector<string> interaction_ids;
 
-            string append_contact_ids() const {
-                string ids = "[";
-                for(string contact : contact_ids){
-                    ids += contact;
-                    ids += ";";
+            string append_ids(const vector<string>& object_ids) const {
+                string ids;
+                int i = 0;
+                for(string object : object_ids){
+                    ids += object;
+                    if(i < object_ids.size() - 1) ids += ";";
+                    i++;
                 }
-                ids += "]";
                 return ids;
             }
         
         public:
 
-            Client(string _name, string _address, string _vat, string _company_email, string _company_phone, vector<string> _contact_ids){
+            Client(string _name, string _address="", string _vat="", string _company_email="test@email.com", string _company_phone="+3333333333", vector<string> _contact_ids = {}){
                 
                 set_name(_name);
                 set_address(_address);
@@ -92,10 +94,28 @@ namespace InsuraPro{
                 return company_phone;
             };
 
-            /// @brief Getter Method for the Client Contacts
+            /// @brief Getter Method for the Client Contacts, represented as std::vectors<string>
             /// @return vector<Contact>
             vector<string> get_contact_ids() const{
                 return contact_ids;
+            };
+
+            /// @brief Getter Method for the Client Contacts, represented as std::string
+            /// @return string
+            string get_contact_ids_as_string() const{
+                return append_ids(contact_ids);
+            };
+
+            /// @brief Getter Method for the Client Interactions, represented as std::vectors<string>
+            /// @return vector<Contact>
+            vector<string> get_interaction_ids() const{
+                return contact_ids;
+            };
+
+            /// @brief Getter Method for the Client Interactions, represented as std::string
+            /// @return string
+            string get_interaction_ids_as_string() const{
+                return append_ids(interaction_ids);
             };
 
 
@@ -116,9 +136,6 @@ namespace InsuraPro{
             /// @brief Setter Method for the Client Address
             /// @param _address string, the new address
             string set_address(string _address){
-                if(_address.empty()){
-                    throw std::invalid_argument("L'indirizzo deve essere valido!");
-                }
                 address = _address;
                 return address;
             };
@@ -126,9 +143,6 @@ namespace InsuraPro{
             /// @brief Setter Method for the Client VAT
             /// @param _vat string, the new VAT
             string set_vat(string _vat){
-                if(_vat.empty()){
-                    throw std::invalid_argument("La partita IVA deve essere valida!");
-                }
                 vat = _vat;
                 return vat;
             };
@@ -195,7 +209,13 @@ namespace InsuraPro{
             /// @brief CSV Representation of the Client Object
             /// @return string
             string to_csv() const{
-                return id + DELIMITER + name + DELIMITER + address + DELIMITER + vat + DELIMITER + company_email + DELIMITER + company_phone + append_contact_ids();
+                return id + DELIMITER + name + DELIMITER + address + DELIMITER + vat + DELIMITER + company_email + DELIMITER + company_phone + DELIMITER + append_ids(contact_ids) + DELIMITER + append_ids(interaction_ids);
+            };
+
+            /// @brief CSV Representation of the Client Object, without the ID
+            /// @return string
+            string to_csv_without_id() const{
+                return name + DELIMITER + address + DELIMITER + vat + DELIMITER + company_email + DELIMITER + company_phone + DELIMITER + append_ids(contact_ids) + DELIMITER + append_ids(interaction_ids);
             };
 
         };

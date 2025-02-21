@@ -30,7 +30,8 @@ int main(){
     cmd_inputs["elimina_cliente"] = 5;
     cmd_inputs["interazione"] = 6;
     cmd_inputs["mostra_interazioni"] = 7;
-    cmd_inputs["chiudi"] = 8;
+    cmd_inputs["cerca_interazioni"] = 8;
+    cmd_inputs["chiudi"] = 9;
 
     cmd_inputs["1"] = 1;
     cmd_inputs["2"] = 2;
@@ -40,6 +41,7 @@ int main(){
     cmd_inputs["6"] = 6;
     cmd_inputs["7"] = 7;
     cmd_inputs["8"] = 8;
+    cmd_inputs["9"] = 9;
     #pragma endregion command_inputs
 
     try
@@ -56,9 +58,13 @@ int main(){
             case 1:
                 Utility::show_help();
                 break;
+
             case 2:
-                //crm->add_client();
+                cout << "Aggiungi uno o più clienti.\n" << endl;
+                crm->add_client();
+
                 break;
+
             case 3:
                 //crm->view_clients();
                 break;
@@ -75,7 +81,11 @@ int main(){
                 //crm->view_interactions();
                 break;
             case 8:
+                //crm->search_interactions();
+                break;
+            case 9:
                 cout << "\nGrazie per aver usato InsuraPro, a presto!" << endl;
+                cmd = "chiudi";
                 break;
             default:
                 cout << "\nComando non riconosciuto." << endl;
@@ -99,7 +109,7 @@ int main(){
 
     /*
     try{
-        InsuraPro::Contact* Contacte = new InsuraPro::Contact("Mario", "Rossi", "ViaRoma1", ");
+        InsuraPro::Contact* Contacte = new InsuraPro::Contact("Mario", "Rossi", "ViaRoma1", "); //errore?
     }
     catch(std::invalid_argument& e){
         cout << "Errore: " << e.what() << endl;
@@ -134,6 +144,12 @@ int main(){
     //     i++;
     // }
 
+
+    // crm->get_clients().InsertRow<string>(crm->get_clients().GetRowCount(), {customer->get_name(), customer->get_address(), customer->get_vat(), customer->get_company_email(), customer->get_company_phone(), customer->get_contact_ids_as_string()}, customer->get_id());
+    // crm->get_clients().Save();
+
+    //cout << crm->get_clients().GetRow<string>(customer->get_id());
+    //crm->add_client();
 
 
 /*
