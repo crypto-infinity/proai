@@ -51,11 +51,21 @@ namespace InsuraPro{
                 return random_string;
             }
 
+            /// @brief Converts a string to lowercase
+            /// @param data string to convert
+            /// @return the converted string
+            const string toLower(string data){
+                string result = data;
+                std::transform(result.begin(), result.end(), result.begin(),
+                               [](unsigned char c) { return std::tolower(c); });
+                return result;
+            }
+
             /// @brief Schema for the Contact CSV File
             const string CONTACTS_SCHEMA = "id,name,surname,address,email,phone,client_id";
 
             /// @brief Schema for the Client CSV File
-            const string CLIENTS_SCHEMA = "id,name,address,vat,company_email,company_phone,contact_ids";
+            const string CLIENTS_SCHEMA = "id,name,address,vat,company_email,company_phone";
 
             /// @brief Schema for the Interaction CSV File
             const string INTERACTIONS_SCHEMA = "id,client_id,type,date,notes";
@@ -69,10 +79,11 @@ namespace InsuraPro{
                 cout << "3. 'mostra_clienti' : visualizza l'elenco dei clienti presenti nel CRM.\n";
                 cout << "4. 'modifica_cliente' : modifica i dati di un cliente presente nel CRM.\n";
                 cout << "5. 'elimina_cliente' : elimina un cliente presente nel CRM.\n";
-                cout << "6. 'interazione' : aggiungi un'interazione ad un cliente presente nel CRM.\n";
-                cout << "7. 'mostra_interazioni' : visualizza l'elenco delle interazioni di un cliente presente nel CRM.\n";
-                cout << "8. 'cerca_interazioni' : cerca un'interazione per tipo o data.\n";
-                cout << "9. 'chiudi' : chiudi il programma.\n";
+                cout << "6. 'ricerca_cliente' : ricerca un cliente per il suo contatto.\n";
+                cout << "7. 'interazione' : aggiungi un'interazione ad un cliente presente nel CRM.\n";
+                cout << "8. 'mostra_interazioni' : visualizza l'elenco delle interazioni di un cliente presente nel CRM.\n";
+                cout << "9. 'cerca_interazioni' : cerca un'interazione per tipo o data.\n";
+                cout << "10. 'chiudi' : chiudi il programma.\n";
             }
 
     };

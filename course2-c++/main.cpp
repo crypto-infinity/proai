@@ -28,10 +28,11 @@ int main(){
     cmd_inputs["mostra_clienti"] = 3; 
     cmd_inputs["modifica_cliente"] = 4;
     cmd_inputs["elimina_cliente"] = 5;
-    cmd_inputs["interazione"] = 6;
-    cmd_inputs["mostra_interazioni"] = 7;
-    cmd_inputs["cerca_interazioni"] = 8;
-    cmd_inputs["chiudi"] = 9;
+    cmd_inputs["ricerca_cliente"] = 6;
+    cmd_inputs["interazione"] = 7;
+    cmd_inputs["mostra_interazioni"] = 8;
+    cmd_inputs["cerca_interazioni"] = 9;
+    cmd_inputs["chiudi"] = 10;
 
     cmd_inputs["1"] = 1;
     cmd_inputs["2"] = 2;
@@ -42,6 +43,7 @@ int main(){
     cmd_inputs["7"] = 7;
     cmd_inputs["8"] = 8;
     cmd_inputs["9"] = 9;
+    cmd_inputs["10"] = 10;
     #pragma endregion command_inputs
 
     try
@@ -51,7 +53,9 @@ int main(){
         
         while(cmd != "chiudi"){
             cout << "\nCosa vuoi fare? (\"supporto\" o \"1\" per mostrare tutte le funzioni): ";
-            cin >> cmd;
+            getline(cin, cmd);
+
+            vector<Client*>* found_clients;
 
             switch (cmd_inputs[cmd])
             {
@@ -77,18 +81,31 @@ int main(){
                 //crm->delete_client();
                 break;
             case 6:
-                //crm->add_interaction();
+                cout << "\nRicerca i clienti del CRM.\n" << endl;
+                found_clients = crm->search_clients();
+
+                if(found_clients->size() > 0){
+                    cout << "\nSono stati trovati " << found_clients->size() << " clienti che corrispondono alla ricerca: " << endl << endl;
+                    for(Client* client : *found_clients){
+                        cout << client->to_string() << endl;
+                    }
+                }
+                else cout << "\nNessun cliente trovato con la query indicata." << endl;
                 break;
             case 7:
-                //crm->view_interactions();
+                //crm->add_interaction();
                 break;
             case 8:
-                //crm->search_interactions();
+                //crm->view_interactions();
                 break;
             case 9:
+                //crm->search_interactions();
+                break;
+            case 10:
                 cout << "\nGrazie per aver usato InsuraPro, a presto!" << endl;
                 cmd = "chiudi";
                 break;
+
             default:
                 cout << "\nComando non riconosciuto." << endl;
                 Utility::show_help();
@@ -157,4 +174,7 @@ int main(){
 /*
 REferenze
 https://stackoverflow.com/questions/20326356/how-to-remove-all-the-occurrences-of-a-char-in-c-string
+
+-  Relazione 1:1 tra Contact e Client
+-  Relazione 1:N tra Client e Interaction
 */

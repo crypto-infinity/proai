@@ -34,7 +34,6 @@ namespace InsuraPro {
 
                     do
                     {
-                        //cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignora il newline rimasto nel buffer
                         Contact* contact = NULL;
 
                         //name input
@@ -138,7 +137,6 @@ namespace InsuraPro {
 
                     do
                     {
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignora il newline rimasto nel buffer
                         Client* client = NULL;
 
                         cout << "\nInserisci i dati del cliente:" << endl;
@@ -225,11 +223,11 @@ namespace InsuraPro {
 
                         if(multiple_entry){
                             cout << "Vuoi aggiungere un altro cliente? (si/no): ";
-                            cin >> user_key;
+                            getline(cin, user_key);
                             while(user_key != "si" && user_key != "no"){
                                 cout << "Comando non valido.";
                                 cout << "Vuoi aggiungere un altro cliente? (si/no): ";
-                                cin >> user_key;
+                                getline(cin, user_key);
                             }
                         }
                     }
@@ -256,7 +254,6 @@ namespace InsuraPro {
 
                     do
                     {
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignora il newline rimasto nel buffer
                         Interaction* interaction = NULL;
 
                         //name input
@@ -264,7 +261,7 @@ namespace InsuraPro {
                             try{
                                 string type = "";
                                 cout << "Tipo (obbligatorio): ";
-                                cin >> type;
+                                getline(cin, type);
                                 interaction = new Interaction(type);
                                 
                             }
@@ -279,7 +276,7 @@ namespace InsuraPro {
                             try{
                                 string date = "";
                                 cout << "Data: ";
-                                cin >> date;
+                                getline(cin, date);
                                 interaction->set_date(date);
                             }
                             catch(exception& e){
@@ -292,7 +289,7 @@ namespace InsuraPro {
                             try{
                                 string description = "";
                                 cout << "Descrizione: ";
-                                cin >> description;
+                                getline(cin, description);
                                 interaction->set_description(description);
                             }
                             catch(exception& e){
@@ -307,11 +304,11 @@ namespace InsuraPro {
 
                         if(multiple_entry){
                             cout << "Vuoi aggiungere un'altra interazione? (si/no): ";
-                            cin >> user_key;
+                            getline(cin, user_key);
                             while(user_key != "si" && user_key != "no"){
                                 cout << "Comando non valido.";
                                 cout << "Vuoi aggiungere un'altra interazione? (si/no): ";
-                                cin >> user_key;
+                                getline(cin, user_key);
                             }
                         }
                     }

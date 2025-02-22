@@ -18,7 +18,7 @@ namespace InsuraPro{
     /// @brief Client Class Definition, represents the Client object with custom methods for manipulation. 
     class Client : Utility {
         private:
-            const string id = "cli-" + generate_random_string(10);
+            string id = "cli-" + generate_random_string(10);
 
             string name;
             string address;
@@ -26,7 +26,6 @@ namespace InsuraPro{
             string company_email;
             string company_phone;
 
-            vector<string> contact_ids;
             vector<string> interaction_ids;
 
             string append_ids(const vector<string>& object_ids) const {
@@ -39,10 +38,10 @@ namespace InsuraPro{
                 }
                 return ids;
             }
-        
+            
         public:
 
-            Client(string _name, string _address="", string _vat="", string _company_email="test@email.com", string _company_phone="+3333333333", vector<string> _contact_ids = {}){
+            Client(string _name, string _address="", string _vat="", string _company_email="test@email.com", string _company_phone="+3333333333"){
                 
                 set_name(_name);
                 set_address(_address);
@@ -50,7 +49,16 @@ namespace InsuraPro{
                 set_company_email(_company_email);
                 set_company_phone(_company_phone);
 
-                set_contacts(_contact_ids);
+            };
+
+            Client(string _id, string _name, string _address="", string _vat="", string _company_email="test@email.com", string _company_phone="+3333333333"){
+                
+                id = _id;
+                set_name(_name);
+                set_address(_address);
+                set_vat(_vat);
+                set_company_email(_company_email);
+                set_company_phone(_company_phone);
 
             };
         
@@ -94,22 +102,10 @@ namespace InsuraPro{
                 return company_phone;
             };
 
-            /// @brief Getter Method for the Client Contacts, represented as std::vectors<string>
-            /// @return vector<Contact>
-            vector<string> get_contact_ids() const{
-                return contact_ids;
-            };
-
-            /// @brief Getter Method for the Client Contacts, represented as std::string
-            /// @return string
-            string get_contact_ids_as_string() const{
-                return append_ids(contact_ids);
-            };
-
             /// @brief Getter Method for the Client Interactions, represented as std::vectors<string>
             /// @return vector<Contact>
             vector<string> get_interaction_ids() const{
-                return contact_ids;
+                return interaction_ids;
             };
 
             /// @brief Getter Method for the Client Interactions, represented as std::string
@@ -173,13 +169,6 @@ namespace InsuraPro{
                 return company_phone;
             };
 
-            /// @brief Setter Method for the Client Contacts
-            /// @param _contacts vector<string>, the new contact ids list
-            vector<string> set_contacts(vector<string> _contact_ids){
-                contact_ids = _contact_ids;
-                return contact_ids;
-            };
-
             /*
             Comparison Methods
             */
@@ -209,13 +198,13 @@ namespace InsuraPro{
             /// @brief CSV Representation of the Client Object
             /// @return string
             string to_csv() const{
-                return id + DELIMITER + name + DELIMITER + address + DELIMITER + vat + DELIMITER + company_email + DELIMITER + company_phone + DELIMITER + append_ids(contact_ids) + DELIMITER + append_ids(interaction_ids);
+                return id + DELIMITER + name + DELIMITER + address + DELIMITER + vat + DELIMITER + company_email + DELIMITER + company_phone + DELIMITER + append_ids(interaction_ids);
             };
 
             /// @brief CSV Representation of the Client Object, without the ID
             /// @return string
             string to_csv_without_id() const{
-                return name + DELIMITER + address + DELIMITER + vat + DELIMITER + company_email + DELIMITER + company_phone + DELIMITER + append_ids(contact_ids) + DELIMITER + append_ids(interaction_ids);
+                return name + DELIMITER + address + DELIMITER + vat + DELIMITER + company_email + DELIMITER + company_phone + DELIMITER + append_ids(interaction_ids);
             };
 
         };

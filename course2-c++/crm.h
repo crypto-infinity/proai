@@ -116,7 +116,6 @@ namespace InsuraPro {
             bool add_client(){
                 try{
                     auto [clients_to_add, contacts_to_add] = get_client_input();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
                     string ack;
 
@@ -132,7 +131,7 @@ namespace InsuraPro {
                     if(ack == "si"){
 
                         for(int i = 0; i < clients_to_add->size(); i++){
-                            clients.InsertRow<string>(clients.GetRowCount(), {(*clients_to_add)[i]->get_name(), (*clients_to_add)[i]->get_address(), (*clients_to_add)[i]->get_vat(), (*clients_to_add)[i]->get_company_email(), (*clients_to_add)[i]->get_company_phone(), (*clients_to_add)[i]->get_contact_ids_as_string()}, (*clients_to_add)[i]->get_id());
+                            clients.InsertRow<string>(clients.GetRowCount(), {(*clients_to_add)[i]->get_name(), (*clients_to_add)[i]->get_address(), (*clients_to_add)[i]->get_vat(), (*clients_to_add)[i]->get_company_email(), (*clients_to_add)[i]->get_company_phone()}, (*clients_to_add)[i]->get_id());
                             contacts.InsertRow<string>(contacts.GetRowCount(), {(*contacts_to_add)[i]->get_name(), (*contacts_to_add)[i]->get_surname(), (*contacts_to_add)[i]->get_address(), (*contacts_to_add)[i]->get_email(), (*contacts_to_add)[i]->get_phone(), (*contacts_to_add)[i]->get_client_id()}, (*contacts_to_add)[i]->get_id());
                         }
 
@@ -150,7 +149,7 @@ namespace InsuraPro {
                     cout << "\nErrore nell'aggiunta del cliente: " << e.what() << endl;
                     return false;
                 }
-            };
+            }
 
             /// @brief Prints all clients in the CRM. Iterates CSV Document.
             void view_clients(){
@@ -173,56 +172,54 @@ namespace InsuraPro {
                         << " | Telefono: " << clients.GetCell<string>("company_phone", id) 
                         << endl;
                 }
-            };
+            }
 
             void update_client(const string& client_id, const Client& updated_client);
             void delete_client(const string& client_id);
 
-            /// @brief Searches for a client in the CRM.
-            /// @return a pointer to clients found matching criterias, or NULL if not found.
-            // vector<Client*>* search_client(){
-            //     try{
-            //         vector<Contact*>* clients_found = new vector<Contact*>();
+            /// @brief Searches for a Client in the CRM by various criterias (Contact Name, Contact Surname, Client Name).
+            /// @return pointer to std::vector<Client> found by matching criterias on contact objects.
+            vector<Client*>* search_clients(){
 
-            //         string name = "";
-            //         string surname = "";
+                string search_key = "";
+                cout << "Inserisci la query di ricerca: ";
+                getline(cin, search_key);
 
-            //         cout << "Inserisci il nome del contatto da cercare: ";
-            //         getline(cin, name);
+                vector<Client*>* found_clients = new vector<Client*>();
 
-            //         cout << "Inserisci il cognome del contatto da cercare: ";
-            //         getline(cin, name);
+                try{
+                    for(int i = 0; i < contacts.GetRowCount(); i++){
+    
+                        if( //Search criterias, can be adapted as needed
+                            toLower(contacts.GetCell<string>("name", i)).find(toLower(search_key)) != string::npos || 
+                            toLower(contacts.GetCell<string>("surname", i)).find(toLower(search_key)) != string::npos ||
+                            toLower(clients.GetCell<string>("name", i)).find(toLower(search_key)) != string::npos
+                          ){
 
-            //         unsigned int rowCount = contacts.GetRowCount();
-            //         vector<string> rowIds = clients.GetRowNames();
+                            string client_id = contacts.GetCell<string>("client_id", i);
+                            
+                            if (clients.GetRow<string>(client_id).size() > 0){
+                                Client* found_client = new Client(
+                                    client_id,
+                                    clients.GetCell<string>("name", client_id),
+                                    clients.GetCell<string>("address", client_id),
+                                    clients.GetCell<string>("vat", client_id),
+                                    clients.GetCell<string>("company_email", client_id),
+                                    clients.GetCell<string>("company_phone", client_id)
+                                );
 
-            //         for (string id : rowIds){
-            //             if(clients.GetCell<string>("name", id) == name){
-            //                 clients_found->push_back(new Client
-            //                     (
-            //                         clients.GetCell<string>("name", id),
-            //                         clients.GetCell<string>("address", id),
-            //                         clients.GetCell<string>("vat", id),
-            //                         clients.GetCell<string>("company_email", id),
-            //                         clients.GetCell<string>("company_phone", id),
-            //                         clients.GetCell<string>("contacts", id)
-            //                     )
-            //                 );
-            //             }
-            //         }
+                                found_clients->push_back(found_client);
+                            }
+                        }
+    
+                    }
+                }
+                catch(exception& e){
+                    cout << "Errore nella ricerca del cliente: " << e.what() << endl;
+                }
 
-            //         if(clients_found->size() == 0){
-            //             cout << "Nessun cliente trovato." << endl;
-            //             return NULL;
-            //         }else{
-            //             return clients_found;
-            //         }
-            //     }
-            //     catch(exception& e){
-            //         cout << "Errore nella ricerca del cliente: " << e.what() << endl;
-            //         return NULL;
-            //     }
-            // };
+                return found_clients;
+            }
 
             #pragma endregion ClientMgmt
 

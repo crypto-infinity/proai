@@ -1,7 +1,5 @@
-id,name,address,vat,company_email,company_phone,contacts
-cli-557lumbgx0,name,address,vat,test@email.it,+393322445632,ctc-4y7v47x6f3;ctc-4y7v47x6f4
-cli-8c56nhgewd,Insura,Std,PIVA,email@email.it,+39966621549,
-cli-qiqndmekl4,"Testspa spa","ViaSat 2",PIVA3,g.scorpaniti@datago.it,+36622323365,
-cli-i3xme3twxo,"TestSpa SPA","Via Herbert 2",IT098948463,g.scorpaniti@datago.it,+3665323564,
-cli-cpmxawsovv,"Herbetr45 Srl","Via Carlo 56",PIVA43,g.scorpaniti@datago.it,+3666326554,
-cli-mad357cz2u,"Visura SPA","Via Herbert 56",IT099458643,email@email.it,+39966254,
+id,name,address,vat,company_email,company_phone
+cli-i3xme3twxo,"TestSpa SPA","Via Herbert 2",IT098948463,g.scorpaniti@datago.it,+3665323564
+cli-cpmxawsovv,"Herbetr45 Srl","Via Carlo 56",PIVA43,g.scorpaniti@datago.it,+3666326554
+cli-mad357cz2u,"Visura SPA","Via Herbert 56",IT099458643,email@email.it,+39966254
+cli-4j5ehxa18u,"Helectro SPA","Via Olof 2",IT5000932064,email@dataog.it,+393665223542
