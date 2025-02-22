@@ -51,6 +51,15 @@ namespace InsuraPro{
                 return random_string;
             }
 
+            /// @brief Schema for the Contact CSV File
+            const string CONTACTS_SCHEMA = "id,name,surname,address,email,phone,client_id";
+
+            /// @brief Schema for the Client CSV File
+            const string CLIENTS_SCHEMA = "id,name,address,vat,company_email,company_phone,contact_ids";
+
+            /// @brief Schema for the Interaction CSV File
+            const string INTERACTIONS_SCHEMA = "id,client_id,type,date,notes";
+
         public:
             /// @brief Show an help menu with all possible commands.
             static void show_help(){

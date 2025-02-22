@@ -8,6 +8,7 @@ Representents the Input class with methods for handling user input and creating 
 #define __INPUT_H_INCLUDED__
 
 #include <bits/stdc++.h>
+#include <tuple>
 
 #include "client.h"
 #include "interaction.h"
@@ -24,7 +25,6 @@ namespace InsuraPro {
 
         protected:
 
-            #pragma region Contact
             /// @brief Gets User Input and creates a Contact object, validating input.
             /// @return Contact
             vector<Contact*>* get_contact_input(bool multiple_entry=true){
@@ -34,7 +34,7 @@ namespace InsuraPro {
 
                     do
                     {
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignora il newline rimasto nel buffer
+                        //cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignora il newline rimasto nel buffer
                         Contact* contact = NULL;
 
                         //name input
@@ -42,12 +42,12 @@ namespace InsuraPro {
                             try{
                                 string name = "";
                                 cout << "Nome (obbligatorio): ";
-                                cin >> name;
+                                getline(cin, name);
                                 contact = new Contact(name);
+                                break;
                             }
                             catch(exception& e){
                                 cout << "\nErrore: " << e.what() << ". Riprova." << endl;
-                                return NULL;
                             }
                         }
 
@@ -56,12 +56,12 @@ namespace InsuraPro {
                             try{
                                 string surname = "";
                                 cout << "Cognome: ";
-                                cin >> surname;
+                                getline(cin, surname);
                                 contact->set_surname(surname);
+                                break;
                             }
                             catch(exception& e){
                                 cout << "\nErrore: " << e.what() << ". Riprova." << endl;
-                                return NULL;
                             }
                         }
 
@@ -69,12 +69,12 @@ namespace InsuraPro {
                             try{
                                 string address = "";
                                 cout << "Indirizzo: ";
-                                cin >> address;
+                                getline(cin, address);
                                 contact->set_address(address);
+                                break;
                             }
                             catch(exception& e){
                                 cout << "\nErrore: " << e.what() << ". Riprova." << endl;
-                                return NULL;
                             }
                         }
 
@@ -82,12 +82,12 @@ namespace InsuraPro {
                             try{
                                 string email = "";
                                 cout << "Email: ";
-                                cin >> email;
+                                getline(cin, email);
                                 contact->set_email(email);
+                                break;
                             }
                             catch(exception& e){
                                 cout << "\nErrore: " << e.what() << ". Riprova." << endl;
-                                return NULL;
                             }
                         }
 
@@ -95,12 +95,12 @@ namespace InsuraPro {
                             try{
                                 string phone = "";
                                 cout << "Telefono: ";
-                                cin >> phone;
+                                getline(cin, phone);
                                 contact->set_phone(phone);
+                                break;
                             }
                             catch(exception& e){
                                 cout << "\nErrore: " << e.what() << ". Riprova." << endl;
-                                return NULL;
                             }
                         }
 
@@ -108,12 +108,14 @@ namespace InsuraPro {
 
                         if(multiple_entry){
                             cout << "Vuoi aggiungere un altro contatto? (si/no): ";
-                            cin >> user_key;
+                            getline(cin, user_key);
                             while(user_key != "si" && user_key != "no"){
                                 cout << "Comando non valido.";
                                 cout << "Vuoi aggiungere un altro contatto? (si/no): ";
-                                cin >> user_key;
+                                getline(cin, user_key);
                             }
+                        }else{
+                            break;
                         }
                     }
                     while(user_key != "no");
@@ -125,20 +127,21 @@ namespace InsuraPro {
                     return NULL;
                 }
             };
-            #pragma endregion Contact
 
-            #pragma region Client
             /// @brief Gets User Input and creates a Client object, validating input.
             /// @return std::vector<Client>
-            vector<Client*>* get_client_input(bool multiple_entry=true, bool connect_contacts=false){
+            tuple< vector<Client*>* , vector<Contact*>* > get_client_input(bool multiple_entry=true, bool connect_contact=true){
                 try{
                     string user_key = "";
                     vector<Client*>* clients_to_add = new vector<Client*>();
+                    vector<Contact*>* contacts_to_add = new vector<Contact*>();
 
                     do
                     {
                         cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignora il newline rimasto nel buffer
                         Client* client = NULL;
+
+                        cout << "\nInserisci i dati del cliente:" << endl;
 
                         //name input
                         while(true){
@@ -210,6 +213,16 @@ namespace InsuraPro {
 
                         clients_to_add->push_back(client);
 
+                        //Connects a Contact object to a Client object by its ID
+                        if(connect_contact){
+                            cout << "\nAggiungi ora il contatto del cliente: " << endl;
+                            contacts_to_add = get_contact_input(false);
+
+                            if(contacts_to_add != NULL){
+                                    contacts_to_add->front()->set_client_id(client->get_id());
+                            }
+                        }
+
                         if(multiple_entry){
                             cout << "Vuoi aggiungere un altro cliente? (si/no): ";
                             cin >> user_key;
@@ -222,17 +235,15 @@ namespace InsuraPro {
                     }
                     while(user_key != "no");
 
-                    return clients_to_add;
+                    return {clients_to_add, contacts_to_add};
 
                     //da integrare con link ai contatti
 
                 }catch(exception& e){
                     cout << "Errore nella creazione del cliente: " << e.what() << endl;
-                    return NULL;
+                    return {};
                 }
             }
-
-            #pragma endregion Client
 
             #pragma region Interaction
 
@@ -291,6 +302,8 @@ namespace InsuraPro {
                         }
 
                         interactions_to_add->push_back(interaction);
+
+                        //collegamento con istanza cliente
 
                         if(multiple_entry){
                             cout << "Vuoi aggiungere un'altra interazione? (si/no): ";

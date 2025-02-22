@@ -20,12 +20,26 @@ namespace InsuraPro{
     class Contact : Utility
     {
         private:
+            /// @brief Contact ID, generated randomly
             const string id = "ctc-" + generate_random_string(10);
+
+            /// @brief Name Attribute
             string name;
+
+            /// @brief Surname Attribute
             string surname;
+
+            /// @brief Address Attribute
             string address;
+
+            /// @brief Email Attribute, must be a valid email
             string email;
+
+            /// @brief Phone Attribute, must be a valid phone number
             string phone;
+
+            /// @brief foreign key, 1:1 relationship with Client
+            string client_id;
         
         public:
             /// @brief Constructor. Initializes the Contact object.
@@ -34,13 +48,14 @@ namespace InsuraPro{
             /// @param _address Contact Address
             /// @param _email Contact Email
             /// @param _phone Contact Phone Number
-            Contact(string _name, string _surname = NULL, string _address = NULL, string _email = NULL, string _phone = NULL){
+            Contact(string _name, string _surname = "", string _address = "", string _email = "", string _phone = "", string _client_id = ""){
 
                 set_name(_name);
                 set_surname(_surname);
                 set_address(_address);
                 set_email(_email);
                 set_phone(_phone);
+                set_client_id(_client_id);
 
             };
         
@@ -84,6 +99,12 @@ namespace InsuraPro{
                 return phone;
             };
 
+            /// @brief Getter Method for the Contact Client ID
+            /// @return string
+            string get_client_id() const{
+                return client_id;
+            };
+
             /*
             Setters Methods
             */
@@ -101,9 +122,6 @@ namespace InsuraPro{
             /// @brief Setter Method for the Contact Surname
             /// @param surname string
             string set_surname(string _surname){
-                if(_surname.empty()){
-                    throw std::invalid_argument("Il cognome deve essere valido!");
-                }
                 surname = _surname;
                 return surname;
             };
@@ -111,9 +129,6 @@ namespace InsuraPro{
             /// @brief Setter Method for the Contact Address
             /// @param address string
             string set_address(string _address){
-                if(_address.empty()){
-                    throw std::invalid_argument("L'indirizzo deve essere valido!");
-                }
                 address = _address;
                 return address;
             };
@@ -121,7 +136,7 @@ namespace InsuraPro{
             /// @brief Setter Method for the Contact Email, applies a regex check
             /// @param email string
             string set_email(string _email){
-                if( _email.empty() ||
+                if( !_email.empty() &&
                     !regex_match(_email, EMAIL_REGEX)
                   )
                 {
@@ -134,7 +149,7 @@ namespace InsuraPro{
             /// @brief Setter Method for the Contact Phone Number
             /// @param phone string
             string set_phone(string _phone){
-                if( _phone.empty() ||
+                if( !_phone.empty() &&
                     !regex_match(_phone, PHONE_REGEX)
                   )
                 {
@@ -142,6 +157,13 @@ namespace InsuraPro{
                 }
                 phone = _phone;
                 return phone;
+            };
+
+            /// @brief Setter Method for the Contact Client ID
+            /// @param client_id string
+            string set_client_id(string _client_id){
+                client_id = _client_id;
+                return client_id;
             };
 
             /*

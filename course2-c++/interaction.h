@@ -53,7 +53,7 @@ namespace InsuraPro{
                     _type.empty() 
                     || (_type != "Appointment" && _type != "Contract")
                 ){
-                    throw std::invalid_argument("Il tipo può essere ""Appointment"" o ""Contract"".");
+                    throw std::invalid_argument("Il tipo può essere solamente ""Appointment"" o ""Contract"".");
                 }
                 type = _type;
             };

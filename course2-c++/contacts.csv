@@ -1,5 +1,6 @@
 id,name,surname,address,email,phone
-1,Mario,Rossi,Via Roma 1,email,telefono
-2,John,Doe,5th Avenue,test@email.com,346756568
-3,Jane,Doe,5th Avenue,test@email.com,346756568
-4,John,Doe,5th Avenue,test@email.com,346756568
+1,Mario,Rossi,"Via Roma 1",email,telefono
+2,John,Doe,"5th Avenue",test@email.com,346756568
+3,Jane,Doe,"5th Avenue",test@email.com,346756568
+4,John,Doe,"5th Avenue",test@email.com,346756568
+ctc-rodstw2gha,Gabriele,Scorpaniti,"Via Olof Palme 15",g.s@d.it,+3995653,cli-mad357cz2u

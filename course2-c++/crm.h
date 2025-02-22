@@ -8,10 +8,13 @@ CRM
 #define __CRM_H_INCLUDED__
 
 #include <bits/stdc++.h>
+#include <filesystem>
 
 #include "input.h"
 
 using namespace std;
+namespace fs = std::filesystem;
+
 #pragma endregion includes
 
 #pragma region CRM
@@ -44,13 +47,39 @@ namespace InsuraPro {
 
             // Constructor
             CRM(){
+
                 try{
-                    contacts = rapidcsv::Document(CONTACTS_FILE, rapidcsv::LabelParams(0, 0));
-                    clients = rapidcsv::Document(CLIENTS_FILE, rapidcsv::LabelParams(0, 0));
-                    interactions = rapidcsv::Document(INTERACTIONS_FILE, rapidcsv::LabelParams(0, 0));
+                    if(fs::exists(CONTACTS_FILE)) contacts = rapidcsv::Document(CONTACTS_FILE, rapidcsv::LabelParams(0, 0));
+                    else throw fstream::failure("Contacts file not readable or found.");
+                    
                 }
-                catch(exception& e){
-                    cout << "Errore nella lettura dei file: " << e.what() << endl;
+                catch(fstream::failure& e){
+                    ofstream file(CONTACTS_FILE);
+                    file << CONTACTS_SCHEMA << endl;
+                    file.close();
+                    contacts = rapidcsv::Document(CONTACTS_FILE, rapidcsv::LabelParams(0, 0));
+                }
+                
+                try{
+                    if(fs::exists(CLIENTS_FILE)) clients = rapidcsv::Document(CLIENTS_FILE, rapidcsv::LabelParams(0, 0));
+                    else throw fstream::failure("Client file not readable or found.");
+                }
+                catch(fstream::failure& e){
+                    ofstream file(CLIENTS_FILE);
+                    file << CLIENTS_SCHEMA << endl;
+                    file.close();
+                    clients = rapidcsv::Document(CLIENTS_FILE, rapidcsv::LabelParams(0, 0));
+                }
+                
+                try{
+                    if(fs::exists(INTERACTIONS_FILE)) interactions = rapidcsv::Document(INTERACTIONS_FILE, rapidcsv::LabelParams(0, 0));
+                    else throw fstream::failure("Interactions file not readable or found.");
+                }
+                catch(fstream::failure& e){
+                    ofstream file(INTERACTIONS_FILE);
+                    file << INTERACTIONS_SCHEMA << endl;
+                    file.close();   
+                    interactions = rapidcsv::Document(INTERACTIONS_FILE, rapidcsv::LabelParams(0, 0));
                 }
             };
 
@@ -77,6 +106,7 @@ namespace InsuraPro {
 
             #pragma endregion Getters
 
+            #pragma region ClientMgmt
             // Client Management Methods
 
             /// @brief Adds a new client to the CRM. Handles user input.
@@ -85,42 +115,118 @@ namespace InsuraPro {
             /// @see get_client_input for user input.
             bool add_client(){
                 try{
-                    vector<Client*>* clients_to_add = get_client_input();
+                    auto [clients_to_add, contacts_to_add] = get_client_input();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
                     string ack;
 
-                    cout << "Vuoi davvero aggiungere " << clients_to_add->size() << " clienti nel CRM? (si/no)" << endl;
+                    cout << "\nVuoi davvero aggiungere " << clients_to_add->size() << " clienti nel CRM? (si/no)" << endl;
 
                     getline(cin, ack);
                     while(ack != "si" && ack != "no"){
                         cout << "Comando non valido.";
-                        cout << "Vuoi davvero aggiungere " << clients_to_add->size() << " clienti nel CRM? (si/no): ";
+                        cout << "\nVuoi davvero aggiungere " << clients_to_add->size() << " clienti nel CRM? (si/no): ";
                         getline(cin, ack);
                     }
 
                     if(ack == "si"){
-                        for(Client* client : *clients_to_add){
-                            clients.InsertRow<string>(clients.GetRowCount(), {client->get_name(), client->get_address(), client->get_vat(), client->get_company_email(), client->get_company_phone(), client->get_contact_ids_as_string()}, client->get_id());
+
+                        for(int i = 0; i < clients_to_add->size(); i++){
+                            clients.InsertRow<string>(clients.GetRowCount(), {(*clients_to_add)[i]->get_name(), (*clients_to_add)[i]->get_address(), (*clients_to_add)[i]->get_vat(), (*clients_to_add)[i]->get_company_email(), (*clients_to_add)[i]->get_company_phone(), (*clients_to_add)[i]->get_contact_ids_as_string()}, (*clients_to_add)[i]->get_id());
+                            contacts.InsertRow<string>(contacts.GetRowCount(), {(*contacts_to_add)[i]->get_name(), (*contacts_to_add)[i]->get_surname(), (*contacts_to_add)[i]->get_address(), (*contacts_to_add)[i]->get_email(), (*contacts_to_add)[i]->get_phone(), (*contacts_to_add)[i]->get_client_id()}, (*contacts_to_add)[i]->get_id());
                         }
 
                         clients.Save();
-                        cout << "Aggiunti con successo!" << endl;
+                        contacts.Save();
+
+                        cout << "\nClienti aggiunti con successo!" << endl;
                         return true;
                     }else{
-                        cout << "Operazione annullata." << endl;
+                        cout << "\nOperazione annullata." << endl;
                         return false;
                     }
                 }
                 catch(exception& e){
-                    cout << "Errore nell'aggiunta del cliente: " << e.what() << endl;
+                    cout << "\nErrore nell'aggiunta del cliente: " << e.what() << endl;
                     return false;
                 }
             };
 
-            void view_clients() const;
+            /// @brief Prints all clients in the CRM. Iterates CSV Document.
+            void view_clients(){
+                unsigned int rowCount = clients.GetRowCount();
+                vector<string> rowIds = clients.GetRowNames();
+
+                if(rowCount == 0){
+                    cout << "Nessun cliente presente nel CRM." << endl;
+                    return;
+                }
+
+                //prints all CSV row, without endlines between attributes
+                for (string id : rowIds){
+                    cout 
+                        << "Cliente ID: " << id
+                        << " | Nome: " << clients.GetCell<string>("name", id) 
+                        << " | Indirizzo: " << clients.GetCell<string>("address", id) 
+                        << " | P.IVA: " << clients.GetCell<string>("vat", id) 
+                        << " | Email: " << clients.GetCell<string>("company_email", id) 
+                        << " | Telefono: " << clients.GetCell<string>("company_phone", id) 
+                        << endl;
+                }
+            };
+
             void update_client(const string& client_id, const Client& updated_client);
             void delete_client(const string& client_id);
-            Client* search_client(const string& client_id);
+
+            /// @brief Searches for a client in the CRM.
+            /// @return a pointer to clients found matching criterias, or NULL if not found.
+            // vector<Client*>* search_client(){
+            //     try{
+            //         vector<Contact*>* clients_found = new vector<Contact*>();
+
+            //         string name = "";
+            //         string surname = "";
+
+            //         cout << "Inserisci il nome del contatto da cercare: ";
+            //         getline(cin, name);
+
+            //         cout << "Inserisci il cognome del contatto da cercare: ";
+            //         getline(cin, name);
+
+            //         unsigned int rowCount = contacts.GetRowCount();
+            //         vector<string> rowIds = clients.GetRowNames();
+
+            //         for (string id : rowIds){
+            //             if(clients.GetCell<string>("name", id) == name){
+            //                 clients_found->push_back(new Client
+            //                     (
+            //                         clients.GetCell<string>("name", id),
+            //                         clients.GetCell<string>("address", id),
+            //                         clients.GetCell<string>("vat", id),
+            //                         clients.GetCell<string>("company_email", id),
+            //                         clients.GetCell<string>("company_phone", id),
+            //                         clients.GetCell<string>("contacts", id)
+            //                     )
+            //                 );
+            //             }
+            //         }
+
+            //         if(clients_found->size() == 0){
+            //             cout << "Nessun cliente trovato." << endl;
+            //             return NULL;
+            //         }else{
+            //             return clients_found;
+            //         }
+            //     }
+            //     catch(exception& e){
+            //         cout << "Errore nella ricerca del cliente: " << e.what() << endl;
+            //         return NULL;
+            //     }
+            // };
+
+            #pragma endregion ClientMgmt
+
+            #pragma region InteractionMgmt
         
             // Interaction Management Methods
 
@@ -129,94 +235,8 @@ namespace InsuraPro {
             void update_interaction(const string& interaction_id, const Interaction& updated_interaction);
             void delete_interaction(const string& interaction_id);
             Interaction* search_interaction(const string& interaction_id);
-        
-            // Data Saving and Loading Methods
 
-            void save_data(const string& file_name) const;
-            void load_data(const string& file_name);
-
-            // Data conversion from CSVs
-
-            /// @brief Converts a CSV line into a Contact Object.
-            /// @param csv_line the CSV line parsed from a file to convert.
-            /// @return a pointer to the Contact object created.
-            Contact* csv_to_contact(string csv_line){
-                stringstream sstream(csv_line);
-                rapidcsv::Document doc(sstream, rapidcsv::LabelParams(0, 0));
-                try{
-                    return new Contact
-                                    (   
-                                        doc.GetCell<string>("name", 0), 
-                                        doc.GetCell<string>("surname", 0), 
-                                        doc.GetCell<string>("address", 0), 
-                                        doc.GetCell<string>("email", 0), 
-                                        doc.GetCell<string>("phone", 0)
-                                    );
-                }
-                catch(exception& e){
-                    cout << "Errore nella conversione del contatto: " << e.what() << endl;
-                    return NULL;
-                }
-            };
-
-            /// @brief Converts a std::string id into a Contact Object, fetched from CSV.
-            /// @param id the id parsed from file.
-            /// @return a pointer to the Contact object created, or null if it's not found.
-            Contact* csv_id_to_contact(string id){
-                try{
-                    if(contacts.GetRow<string>(id).size() != 0){
-                        return new Contact
-                        (   
-                            contacts.GetCell<string>("name", id), 
-                            contacts.GetCell<string>("surname", id), 
-                            contacts.GetCell<string>("address", id), 
-                            contacts.GetCell<string>("email", id), 
-                            contacts.GetCell<string>("phone", id)
-                        );
-                    }else{
-                        return NULL;
-                    }
-
-                }
-                catch(exception& e){
-                    cout << "Errore nella conversione del contatto: " << e.what() << endl;
-                    return NULL;
-                }
-            };
-
-            // /// @brief Converts a CSV line into a Client Object.
-            // /// @param csv_line the CSV line parsed from a file to convert.
-            // /// @return a pointer to the Client object created.
-            // Client* csv_to_client(string csv_line){
-            //     stringstream sstream(csv_line);
-            //     rapidcsv::Document doc(sstream, rapidcsv::LabelParams(0, 0));
-            //     try{
-            //         string contact_ids_csv = doc.GetCell<string>("contacts", 0);
-            //         vector<string> contacts_ids_string;
-            //         boost::erase_all(contact_ids_csv, "["); //[ctc-1;ctc-2] > ctc1;ctc-2
-            //         boost::erase_all(contact_ids_csv, "]"); //[ctc-1;ctc-2] > ctc1;ctc-2
-            //         boost::split(contacts_ids_string,contact_ids_csv,boost::is_any_of(";"));
-            //         int test;
-
-            //         return new Client
-            //                         (   
-            //                             doc.GetCell<string>("name", 0), 
-            //                             doc.GetCell<string>("address", 0), 
-            //                             doc.GetCell<string>("vat", 0), 
-            //                             doc.GetCell<string>("company_email", 0), 
-            //                             doc.GetCell<string>("company_phone", 0)
-            //                         );
-            //     }
-            //     catch(exception& e){
-            //         cout << "Errore nella conversione del cliente: " << e.what() << endl;
-            //         return NULL;
-            //     }
-            // };
-
-            /// @brief Converts a CSV line into an Interaction Object.
-            /// @param csv_line the CSV line parsed from a file to convert.
-            /// @return a pointer to the Interaction object created.
-            Interaction* csv_to_interaction(string csv_line);
+            #pragma endregion InteractionMgmt
 
         };
 }

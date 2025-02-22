@@ -60,14 +60,16 @@ int main(){
                 break;
 
             case 2:
-                cout << "Aggiungi uno o più clienti.\n" << endl;
+                cout << "\nAggiungi uno o più clienti nel CRM." << endl;
                 crm->add_client();
 
                 break;
 
             case 3:
-                //crm->view_clients();
+                cout << "\nVisualizza i clienti del CRM.\n" << endl;
+                crm->view_clients();
                 break;
+
             case 4:
                 //crm->update_client();
                 break;
