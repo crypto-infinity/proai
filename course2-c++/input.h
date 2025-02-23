@@ -93,7 +93,7 @@ namespace InsuraPro {
                         while(true){
                             try{
                                 string phone = "";
-                                cout << "Telefono: ";
+                                cout << "Telefono (con prefisso): ";
                                 getline(cin, phone);
                                 contact->set_phone(phone);
                                 break;
@@ -139,13 +139,13 @@ namespace InsuraPro {
                     {
                         Client* client = NULL;
 
-                        cout << "\nInserisci i dati del cliente:" << endl;
+                        cout << "\nInserisci i dati dell'azienda: " << endl;
 
                         //name input
                         while(true){
                             try{
                                 string name = "";
-                                cout << "Nome (obbligatorio): ";
+                                cout << "Nome Azienda (obbligatorio): ";
                                 
                                 getline(cin, name);
                                 client = new Client(name);
@@ -160,7 +160,7 @@ namespace InsuraPro {
                         while(true){
                             try{
                                 string address = "";
-                                cout << "Indirizzo: ";
+                                cout << "Indirizzo Sede: ";
                                 getline(cin, address);
                                 client->set_address(address);
                                 break;
@@ -199,7 +199,7 @@ namespace InsuraPro {
                         while(true){
                             try{
                                 string company_phone = "";
-                                cout << "Telefono Aziendale: ";
+                                cout << "Telefono Aziendale (con prefisso): ";
                                 getline(cin, company_phone);
                                 client->set_company_phone(company_phone);
                                 break;
@@ -214,14 +214,16 @@ namespace InsuraPro {
                         //Connects a Contact object to a Client object by its ID
                         if(connect_contact){
                             cout << "\nAggiungi ora il contatto del cliente: " << endl;
-                            contacts_to_add = get_contact_input(false);
+                            vector<Contact*>* new_contact_results = get_contact_input(false);
+                            Contact* new_contact = new_contact_results->front();
 
                             if(contacts_to_add != NULL){
-                                    contacts_to_add->front()->set_client_id(client->get_id());
+                                new_contact->set_client_id(client->get_id());
+                                contacts_to_add->push_back(new_contact);
                             }
                         }
 
-                        if(multiple_entry){
+                        if(multiple_entry){ 
                             cout << "Vuoi aggiungere un altro cliente? (si/no): ";
                             getline(cin, user_key);
                             while(user_key != "si" && user_key != "no"){

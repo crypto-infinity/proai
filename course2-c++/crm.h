@@ -119,7 +119,7 @@ namespace InsuraPro {
 
                     string ack;
 
-                    cout << "\nVuoi davvero aggiungere " << clients_to_add->size() << " clienti nel CRM? (si/no)" << endl;
+                    cout << "\nVuoi davvero aggiungere " << clients_to_add->size() << " clienti nel CRM? (si/no): ";
 
                     getline(cin, ack);
                     while(ack != "si" && ack != "no"){
@@ -131,8 +131,25 @@ namespace InsuraPro {
                     if(ack == "si"){
 
                         for(int i = 0; i < clients_to_add->size(); i++){
-                            clients.InsertRow<string>(clients.GetRowCount(), {(*clients_to_add)[i]->get_name(), (*clients_to_add)[i]->get_address(), (*clients_to_add)[i]->get_vat(), (*clients_to_add)[i]->get_company_email(), (*clients_to_add)[i]->get_company_phone()}, (*clients_to_add)[i]->get_id());
-                            contacts.InsertRow<string>(contacts.GetRowCount(), {(*contacts_to_add)[i]->get_name(), (*contacts_to_add)[i]->get_surname(), (*contacts_to_add)[i]->get_address(), (*contacts_to_add)[i]->get_email(), (*contacts_to_add)[i]->get_phone(), (*contacts_to_add)[i]->get_client_id()}, (*contacts_to_add)[i]->get_id());
+                            clients.InsertRow<string>(
+                                    clients.GetRowCount(), 
+                                        {(*clients_to_add)[i]->get_name(), 
+                                            (*clients_to_add)[i]->get_address(), 
+                                            (*clients_to_add)[i]->get_vat(), 
+                                            (*clients_to_add)[i]->get_company_email(), 
+                                            (*clients_to_add)[i]->get_company_phone()}, 
+                                            (*clients_to_add)[i]->get_id()
+                                );
+                            contacts.InsertRow<string>(
+                                contacts.GetRowCount(), 
+                                    {(*contacts_to_add)[i]->get_name(), 
+                                        (*contacts_to_add)[i]->get_surname(), 
+                                        (*contacts_to_add)[i]->get_address(), 
+                                        (*contacts_to_add)[i]->get_email(), 
+                                        (*contacts_to_add)[i]->get_phone(), 
+                                        (*contacts_to_add)[i]->get_client_id()}, 
+                                        (*contacts_to_add)[i]->get_id()
+                                );
                         }
 
                         clients.Save();
