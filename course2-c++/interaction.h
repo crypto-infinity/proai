@@ -53,7 +53,7 @@ namespace InsuraPro{
                     _type.empty() 
                     || (_type != "Appointment" && _type != "Contract")
                 ){
-                    throw std::invalid_argument("Il tipo può essere solamente ""Appointment"" o ""Contract"".");
+                    throw std::invalid_argument("Il tipo può essere solamente ""Appointment"" o ""Contract""");
                 }
                 type = _type;
             };
@@ -68,7 +68,7 @@ namespace InsuraPro{
             /// @param _date string, the new date
             void set_date(const string& _date){
                 if(_date.empty()){
-                    throw std::invalid_argument("La data deve essere valida!");
+                    throw std::invalid_argument("La data deve essere valida");
                 }
                 date = _date;
             };
@@ -81,11 +81,9 @@ namespace InsuraPro{
     
             /// @brief Setter Method for the Interaction Description
             /// @param _description string, the new description
-            void set_description(const string& _description){
-                if(_description.empty()){
-                    throw std::invalid_argument("La descrizione deve essere valida!");
-                }
+            string set_description(const string& _description){
                 description = _description;
+                return description;
             };
         };
 }

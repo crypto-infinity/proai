@@ -174,11 +174,162 @@ namespace InsuraPro {
                 }
             }
 
-            void update_client(const string& client_id, const Client& updated_client);
-            void delete_client(const string& client_id);
+            /// @brief Updates a client in the CRM and its associated contact.
+            /// @return bool, true if the client/contact was updated successfully, false otherwise.
+            bool update_client(){
+                vector<Client*>* clients_to_update = search_clients();
+
+                if(clients_to_update->size() == 0){
+                    cout << "Nessun cliente trovato." << endl;
+                    return false;
+                }
+
+                cout << "Clienti trovati: " << endl;
+
+                vector<tuple<int,string>> client_data(clients_to_update->size());
+
+                for(int i = 0; i < clients_to_update->size(); i++){
+                    cout << (i + 1) << ". " << (*clients_to_update)[i]->get_name() << " " << (*clients_to_update)[i]->get_address() << endl;
+                    client_data[i] = {i ,(*clients_to_update)[i]->get_id()};
+                }
+
+                string input = "";
+                string client_id_to_modify = "";
+                int index;
+                cout << "\nQuale vuoi modificare? Inserisci il numero corrispondente: ";
+                getline(cin, input);
+
+                while(true){
+                    try{
+                        index = stoi(input) - 1;
+                        client_id_to_modify = get<1>(client_data[index]);
+                        break;
+                    }
+                    catch(exception& e){
+                        cout << "Indice non valido. Riprova.";
+                        getline(cin, input);
+                    }
+                }
+
+                cout << "\nInserisci i nuovi dati del cliente: " << endl;
+                auto [clients_to_add, contacts_to_add] = get_client_input(false,true);
+
+                string ack;
+
+                cout << "\nVuoi davvero aggiornare il cliente " << clients.GetCell<string>("name",client_id_to_modify) << " ? (si/no): ";
+                getline(cin, ack);
+
+                while(ack != "si" && ack != "no"){
+                    cout << "Comando non valido.";
+                    cout << "\nVuoi davvero aggiornare il cliente? (si/no): ";
+                    getline(cin, ack);
+                }
+
+                if(ack == "si"){
+
+                    clients.SetRow<string>(client_id_to_modify, {
+                        (*clients_to_add)[0]->get_name(), 
+                        (*clients_to_add)[0]->get_address(), 
+                        (*clients_to_add)[0]->get_vat(), 
+                        (*clients_to_add)[0]->get_company_email(), 
+                        (*clients_to_add)[0]->get_company_phone()
+                    });
+
+                    int rowCount = contacts.GetRowCount();
+                    for(int i = 0; i < rowCount; i++){
+                        if(contacts.GetCell<string>("client_id", i) == client_id_to_modify){
+                            contacts.SetRow<string>(i, {
+                                (*contacts_to_add)[0]->get_name(), 
+                                (*contacts_to_add)[0]->get_surname(), 
+                                (*contacts_to_add)[0]->get_address(), 
+                                (*contacts_to_add)[0]->get_email(), 
+                                (*contacts_to_add)[0]->get_phone()
+                            });
+                        }
+                    }
+
+                    clients.Save();
+                    contacts.Save();
+
+                    cout << "\nCliente aggiornato con successo!" << endl;
+                    return true;
+                }else{
+                    cout << "\nOperazione annullata." << endl;
+                    return false;
+                }
+
+                return false;
+            }
+
+            /// @brief Deletes a client from the CRM and its associated contact.
+            /// @return bool, true if the client/contact was deleted successfully, false otherwise.
+            bool delete_client(){
+                vector<Client*>* clients_to_delete = search_clients();
+
+                if(clients_to_delete->size() == 0){
+                    cout << "Nessun cliente trovato." << endl;
+                    return false;
+                }
+
+                cout << "Clienti trovati: " << endl;
+
+                vector<tuple<int,string>> client_data(clients_to_delete->size());
+
+                for(int i = 0; i < clients_to_delete->size(); i++){
+                    cout << (i + 1) << ". " << (*clients_to_delete)[i]->get_name() << " " << (*clients_to_delete)[i]->get_address() << endl;
+                    client_data[i] = {i ,(*clients_to_delete)[i]->get_id()};
+                }
+
+                string input = "";
+                string client_id_to_delete = "";
+                int index;
+                cout << "\nQuale vuoi eliminare? Inserisci il numero corrispondente: ";
+                getline(cin, input);
+
+                while(true){
+                    try{
+                        index = stoi(input) - 1;
+                        client_id_to_delete = get<1>(client_data[index]);
+                        break;
+                    }
+                    catch(exception& e){
+                        cout << "Indice non valido. Riprova.";
+                        getline(cin, input);
+                    }
+                }
+
+                cout << "\nVuoi davvero eliminare il cliente " << clients.GetCell<string>("name",client_id_to_delete) << " ? (si/no): ";
+                getline(cin, input);
+
+                while(input != "si" && input != "no"){
+                    cout << "Comando non valido.";
+                    cout << "\nVuoi davvero eliminare il cliente? (si/no): ";
+                    getline(cin, input);
+                }
+
+                if(input == "si"){
+
+                    clients.RemoveRow(client_id_to_delete);
+
+                    int rowCount = contacts.GetRowCount();
+                    for(int i = 0; i < rowCount; i++){
+                        if(contacts.GetCell<string>("client_id", i) == client_id_to_delete) contacts.RemoveRow(i);
+                    }
+
+                    clients.Save();
+                    contacts.Save();
+
+                    cout << "\nCliente eliminato con successo!" << endl;
+                    return true;
+                }else{
+                    cout << "\nOperazione annullata." << endl;
+                    return false;
+                }
+                return false;
+            }
 
             /// @brief Searches for a Client in the CRM by various criterias (Contact Name, Contact Surname, Client Name).
-            /// @return pointer to std::vector<Client> found by matching criterias on contact objects.
+            /// @return pointer to std::vector<Client> populated by matching criterias on contact/client objects.
             vector<Client*>* search_clients(){
 
                 string search_key = "";
@@ -188,7 +339,7 @@ namespace InsuraPro {
                 vector<Client*>* found_clients = new vector<Client*>();
 
                 try{
-                    for(int i = 0; i < contacts.GetRowCount(); i++){
+                    for(int i = 0; i < clients.GetRowCount(); i++){
     
                         if( //Search criterias, can be adapted as needed
                             toLower(contacts.GetCell<string>("name", i)).find(toLower(search_key)) != string::npos || 
@@ -224,7 +375,6 @@ namespace InsuraPro {
             #pragma endregion ClientMgmt
 
             #pragma region InteractionMgmt
-        
             // Interaction Management Methods
 
             void add_interaction(const Interaction& interaction);

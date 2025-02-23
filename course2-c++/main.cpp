@@ -75,10 +75,12 @@ int main(){
                 break;
 
             case 4:
-                //crm->update_client();
+                cout << "\nAggiorna un cliente nel CRM.\n" << endl;
+                crm->update_client();
                 break;
             case 5:
-                //crm->delete_client();
+                cout << "\nElimina un cliente nel CRM.\n" << endl;
+                crm->delete_client();
                 break;
             case 6:
                 cout << "\nRicerca i clienti del CRM.\n" << endl;

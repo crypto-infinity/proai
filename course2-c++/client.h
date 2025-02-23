@@ -62,6 +62,7 @@ namespace InsuraPro{
 
             };
         
+            #pragma region Getters
             /*
             Getters Methods
             */
@@ -113,8 +114,9 @@ namespace InsuraPro{
             string get_interaction_ids_as_string() const{
                 return append_ids(interaction_ids);
             };
+            #pragma endregion Getters
 
-
+            #pragma region Setters
             /*
             Setters Methods
             */
@@ -123,7 +125,7 @@ namespace InsuraPro{
             /// @param _name string, the new name
             string set_name(string _name){
                 if(_name.empty()){
-                    throw std::invalid_argument("Il nome deve essere valido!");
+                    throw std::invalid_argument("Il nome deve essere valido");
                 }
                 name = _name;
                 return name;
@@ -146,11 +148,11 @@ namespace InsuraPro{
             /// @brief Setter Method for the Client Company Email
             /// @param _company_email string, the new company email
             string set_company_email(string _company_email){
-                if( _company_email.empty() ||
+                if( !_company_email.empty() &&
                     !regex_match(_company_email, EMAIL_REGEX)
                   )
                 {
-                    throw std::invalid_argument("L'email non è valida.");
+                    throw std::invalid_argument("L'email non è valida");
                 }
                 company_email = _company_email;
                 return company_email;
@@ -159,11 +161,11 @@ namespace InsuraPro{
             /// @brief Setter Method for the Client Company Phone
             /// @param _company_phone string, the new company phone
             string set_company_phone(string _company_phone){
-                if( _company_phone.empty() ||
+                if( !_company_phone.empty() &&
                     !regex_match(_company_phone, PHONE_REGEX)
                   )
                 {
-                    throw std::invalid_argument("Il numero di telefono non è valido.");
+                    throw std::invalid_argument("Il numero di telefono non è valido");
                 }
                 company_phone = _company_phone;
                 return company_phone;

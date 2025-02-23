@@ -113,7 +113,7 @@ namespace InsuraPro{
             /// @param name string, the new name
             string set_name(string _name){
                 if(_name.empty()){
-                    throw std::invalid_argument("Il nome deve essere valido!");
+                    throw std::invalid_argument("Il nome deve essere valido");
                 }
                 name = _name;
                 return name;
@@ -140,7 +140,7 @@ namespace InsuraPro{
                     !regex_match(_email, EMAIL_REGEX)
                   )
                 {
-                    throw std::invalid_argument("L'email non è valida.");
+                    throw std::invalid_argument("L'email non è valida");
                 }
                 email = _email;
                 return email;
@@ -153,7 +153,7 @@ namespace InsuraPro{
                     !regex_match(_phone, PHONE_REGEX)
                   )
                 {
-                    throw std::invalid_argument("Il telefono non è valido.");
+                    throw std::invalid_argument("Il telefono non è valido");
                 }
                 phone = _phone;
                 return phone;

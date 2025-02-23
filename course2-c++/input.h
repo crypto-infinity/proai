@@ -127,7 +127,7 @@ namespace InsuraPro {
                 }
             };
 
-            /// @brief Gets User Input and creates a Client object, validating input.
+            /// @brief Gets User Input and creates a Client object with associated contact, if specified, validating input.
             /// @return std::vector<Client>
             tuple< vector<Client*>* , vector<Contact*>* > get_client_input(bool multiple_entry=true, bool connect_contact=true){
                 try{
