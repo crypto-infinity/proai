@@ -25,26 +25,28 @@ namespace InsuraPro{
         
             string id = "int-" + generate_random_string(10);
     
+            string name;
             string type; // Appuntamento or Contratto
             string date;
             string description;
         
         public:
 
-            Interaction(string type, string date="", string description=""){
+            Interaction(string _name, string _type="appuntamento", string _date="", string _description=""){
     
-                set_type(type);
-                set_date(date);
-                set_description(description);
+                set_name(_name);
+                set_type(_type);
+                set_date(_date);
+                set_description(_description);
     
             };
 
-            Interaction(string _id, string type, string date="", string description=""){
+            Interaction(string _id, string _name, string _type="appuntamento", string _date="", string _description=""){
                 
                 id = _id;
-                set_type(type);
-                set_date(date);
-                set_description(description);
+                set_type(_type);
+                set_date(_date);
+                set_description(_description);
     
             };
         
@@ -54,6 +56,22 @@ namespace InsuraPro{
             /// @return string
             string get_id(){
                 return id;
+            };
+
+            /// @brief Getter Method for Name
+            /// @return string
+            string get_name(){
+                return name;
+            };
+
+            /// @brief Setter Method for Name
+            /// @param _name string, the new name
+            string set_name(string _name){
+                if(_name.empty()){
+                    throw std::invalid_argument("Il nome non può essere vuoto");
+                }
+                name = _name;
+                return name;
             };
         
             /// @brief Getter Method for the Interaction Type
@@ -100,6 +118,8 @@ namespace InsuraPro{
                 description = _description;
                 return description;
             };
+
+
 
             /// @brief Returns a string representation of the Interaction object
             /// @return string

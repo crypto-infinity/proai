@@ -1,9 +1,12 @@
 /*
 Input Header Class
 Representents the Input class with methods for handling user input and creating objects.
+
+Gabriele Scorpaniti, 2025
 */
 
 #pragma region includes
+
 #ifndef __INPUT_H_INCLUDED__
 #define __INPUT_H_INCLUDED__
 
@@ -15,18 +18,18 @@ Representents the Input class with methods for handling user input and creating 
 #include "contact.h"
 
 using namespace std;
+
 #pragma endregion includes
 
-#pragma region CRM
+#pragma region Input
 namespace InsuraPro {
 
     /// @brief Input Class, used for handling user input and creating objects.
     class Input{
-
         protected:
 
             /// @brief Gets User Input and creates a Contact object, validating input.
-            /// @return Contact
+            /// @return Contact*, a pointer to the created Contact object.
             vector<Contact*>* get_contact_input(bool multiple_entry=true){
                 try{
                     string user_key = "";
@@ -128,7 +131,7 @@ namespace InsuraPro {
             };
 
             /// @brief Gets User Input and creates a Client object with associated contact, if specified, validating input.
-            /// @return std::vector<Client>
+            /// @return tuple< vector<Client*> , vector<Contact*> >, a tuple containing the created Client and Contact objects linked together.
             tuple< vector<Client*>* , vector<Contact*>* > get_client_input(bool multiple_entry=true, bool connect_contact=true){
                 try{
                     string user_key = "";
@@ -237,18 +240,15 @@ namespace InsuraPro {
 
                     return {clients_to_add, contacts_to_add};
 
-                    //da integrare con link ai contatti
-
                 }catch(exception& e){
                     cout << "Errore nella creazione del cliente: " << e.what() << endl;
                     return {};
                 }
             }
 
-            #pragma region Interaction
 
             /// @brief Gets User Input and creates an Interaction object, validating input.
-            /// @return std::vector<Interaction>
+            /// @return std::vector<Interaction*>*, a vector representing the created Interaction objects.
             vector<Interaction*>* get_interaction_input(bool multiple_entry=true){
                 try{
                     string user_key = "";
@@ -261,11 +261,25 @@ namespace InsuraPro {
                         //name input
                         while(true){
                             try{
+                                string name = "";
+                                cout << "Nome (obbligatorio): ";
+                                getline(cin, name);
+                                interaction = new Interaction(name);
+                                break;
+                            }
+                            catch(exception& e){
+                                cout << "\nErrore: " << e.what() << ". Riprova." << endl;
+                            }
+                        }
+
+                        //other fields input
+                        while(true){
+                            try{
                                 string type = "";
                                 cout << "Tipo (appuntamento/contratto) - obbligatorio: ";
                                 getline(cin, type);
                                 Utility::toLower(type);
-                                interaction = new Interaction(type);
+                                interaction->set_type(type);
                                 break;
                             }
                             catch(exception& e){
@@ -324,11 +338,8 @@ namespace InsuraPro {
                 }
             }
 
-
-            #pragma endregion Interaction
-
     };
 }
-#pragma endregion CRM
+#pragma endregion Input
 
 #endif

@@ -1,6 +1,2 @@
-id,type,date,description
-int-zk8hblxa4l,contratto,28/01,"Ottenuto 50 BP"
-int-d3q72t524i,contratto,98/08,Test1
-int-7x8u3f2dmf,appuntamento,34/06,Test2
-int-wiom5siagi,contratto,4/06,Test
-int-vl6j3i07kf,contratto,3/06,test
+id,name,type,date,description
+int-hrwlafcuqb,"Chiamato il cliente",contratto,4/06,"Contattato il cliente"

@@ -1,6 +1,7 @@
 /*
-CRM 
+CRM Class, represents the CRM program with custom methods for client/interaction manipulation.
 
+Gabriele Scorpaniti, 2025
 */
 
 #pragma region includes
@@ -22,7 +23,6 @@ namespace InsuraPro {
 
     /// @brief CRM Class, represents the CRM program with custom methods for client/interaction manipulation.
     class CRM : Utility, Input {
-
         private:
 
             /// @brief Client file path
@@ -45,9 +45,8 @@ namespace InsuraPro {
         
         public:
 
-            // Constructor
+            /// @brief Default constructor for the CRM class, initializes the CSV files and handles exceptions.
             CRM(){
-
                 try{
                     if(fs::exists(CONTACTS_FILE)) contacts = rapidcsv::Document(CONTACTS_FILE, rapidcsv::LabelParams(0, 0));
                     else throw fstream::failure("Contacts file not readable or found.");
@@ -84,7 +83,6 @@ namespace InsuraPro {
             };
 
             #pragma region Getters
-            //Getters
 
             /// @brief Getter Method for Contact CSV rapidcsv::document
             /// @return rapidcsv::Document
@@ -185,12 +183,12 @@ namespace InsuraPro {
                 //prints all CSV row, without endlines between attributes
                 for (string id : rowIds){
                     cout 
-                        << "Cliente ID: " << id
+                        << "Cliente: " << id
                         << " | Nome: " << clients.GetCell<string>("name", id) 
-                        << " | Indirizzo: " << clients.GetCell<string>("address", id) 
-                        << " | P.IVA: " << clients.GetCell<string>("vat", id) 
-                        << " | Email: " << clients.GetCell<string>("company_email", id) 
-                        << " | Telefono: " << clients.GetCell<string>("company_phone", id) 
+                        << " | Indirizzo Az.: " << clients.GetCell<string>("address", id) 
+                        << " | VAT: " << clients.GetCell<string>("vat", id) 
+                        << " | Email Az.: " << clients.GetCell<string>("company_email", id) 
+                        << " | Telefono Az.: " << clients.GetCell<string>("company_phone", id) 
                         << endl;
                 }
             }
@@ -318,7 +316,7 @@ namespace InsuraPro {
                     }
                 }
 
-                cout << "\nVuoi davvero eliminare il cliente " << clients.GetCell<string>("name",client_id_to_delete) << " ? (si/no): ";
+                cout << "\nVuoi davvero eliminare il cliente " << clients.GetCell<string>("name",client_id_to_delete) << " con contatti e interazioni ad esso associate? (si/no): ";
                 getline(cin, input);
 
                 while(input != "si" && input != "no"){
@@ -329,18 +327,24 @@ namespace InsuraPro {
 
                 if(input == "si"){
 
+                    //removes client
                     clients.RemoveRow(client_id_to_delete);
 
+                    //remove clients associated
                     int rowCount = contacts.GetRowCount();
-                    for(int i = 0; i < rowCount; i++){
-                        if(contacts.GetCell<string>("client_id", i) == client_id_to_delete) contacts.RemoveRow(i);
-                    }
+                    for(int i = 0; i < rowCount; i++) if(contacts.GetCell<string>("client_id", i) == client_id_to_delete) contacts.RemoveRow(i);
+                    
+                    //remove interactions associated
+                    vector<string>* interaction_ids_to_delete = Client::get_interaction_ids_from_csv(clients.GetCell<string>("interaction_ids", client_id_to_delete));
+
+                    for(string interaction_id : *interaction_ids_to_delete) interactions.RemoveRow(interaction_id);
 
                     clients.Save();
                     contacts.Save();
 
                     cout << "\nCliente eliminato con successo!" << endl;
                     return true;
+
                 }else{
                     cout << "\nOperazione annullata." << endl;
                     return false;
@@ -461,6 +465,7 @@ namespace InsuraPro {
                             interactions.InsertRow<string>(
                                 interactions.GetRowCount(), 
                                     {
+                                        (*interactions_to_add)[i]->get_name(),
                                         (*interactions_to_add)[i]->get_type(), 
                                         (*interactions_to_add)[i]->get_date(), 
                                         (*interactions_to_add)[i]->get_description()
@@ -486,24 +491,47 @@ namespace InsuraPro {
             };
 
             /// @brief Prints all interactions in the CRM.
-            void view_interactions(){
+            /// @return bool, true if the interactions were printed successfully, false otherwise.
+            bool view_interactions(){
                 unsigned int rowCount = interactions.GetRowCount();
                 vector<string> rowIds = interactions.GetRowNames();
 
                 if(rowCount == 0){
-                    cout << "Nessuna interazione presente nel CRM." << endl;
-                    return;
+                    cout << "\nNessuna interazione presente nel CRM." << endl;
+                    return true;
                 }
 
-                //prints all CSV row, without endlines between attributes
-                for (string id : rowIds){
-                    cout 
-                        << "Interazione ID: " << id
-                        << " | Tipo: " << interactions.GetCell<string>("type", id) 
-                        << " | Data: " << interactions.GetCell<string>("date", id) 
-                        << " | Descrizione: " << interactions.GetCell<string>("description", id) 
-                        << endl;
+                for (int i = 0; i < clients.GetRowCount(); i++){
+                    cout << "Interazioni del Cliente " << clients.GetCell<string>("name", i) << " :" << endl;
+                    vector<string>* interaction_ids = Client::get_interaction_ids_from_csv(clients.GetCell<string>("interaction_ids", i));
+                    bool correspondence = false;
+
+                    if(interaction_ids == NULL){
+                        cout << "\nNessuna interazione." << endl;
+                        continue;
+                    }
+                    else{ //DA DEBUGGARE
+                        //prints all CSV row associated to the specific customer
+                        for (string id : rowIds){
+                            for(int j = 0; j < interaction_ids->size(); j++){
+                                if(id == (*interaction_ids)[j]){
+                                    cout 
+                                        << endl
+                                        << "Interazione: " << id
+                                        << " | Nome: " << interactions.GetCell<string>("name", id)
+                                        << " | Tipo: " << interactions.GetCell<string>("type", id) 
+                                        << " | Data: " << interactions.GetCell<string>("date", id) 
+                                        << " | Descrizione: " << interactions.GetCell<string>("description", id) 
+                                        << endl;
+                                    correspondence = true;
+                                }
+                            }
+    
+                        }
+                    }
+                    if(!correspondence) cout << "\nNessuna interazione." << endl;
                 }
+                return true;
             }
 
             /// @brief Searches for an Interaction in the CRM by various criterias (Type, Date).
@@ -520,13 +548,16 @@ namespace InsuraPro {
                     for(int i = 0; i < interactions.GetRowCount(); i++){
     
                         if( //Search criterias, can be adapted as needed
+                            toLower(interactions.GetCell<string>("name", i)).find(toLower(search_key)) != string::npos ||
                             toLower(interactions.GetCell<string>("type", i)).find(toLower(search_key)) != string::npos || 
                             toLower(interactions.GetCell<string>("date", i)).find(toLower(search_key)) != string::npos ||
-                            toLower(interactions.GetCell<string>("description", i)).find(toLower(search_key)) != string::npos
+                            toLower(interactions.GetCell<string>("description", i)).find(toLower(search_key)) != string::npos ||
+                            toLower(clients.GetCell<string>("name", i)).find(toLower(search_key)) != string::npos
                           ){
 
                             Interaction* found_interaction = new Interaction(
-                                (*found_interactions)[i]->get_id(), //segmentation fault
+                                interactions.GetRowName(i), //segmentation fault
+                                interactions.GetCell<string>("name", i),
                                 interactions.GetCell<string>("type", i),
                                 interactions.GetCell<string>("date", i),
                                 interactions.GetCell<string>("description", i)
@@ -534,7 +565,6 @@ namespace InsuraPro {
 
                             found_interactions->push_back(found_interaction);
                         }
-    
                     }
                 }
                 catch(exception& e){

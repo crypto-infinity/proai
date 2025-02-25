@@ -171,6 +171,8 @@ namespace InsuraPro{
                 return company_phone;
             };
 
+            #pragma endregion Setters
+
             /*
             Comparison Methods
             */
@@ -209,6 +211,26 @@ namespace InsuraPro{
                 return name + DELIMITER + address + DELIMITER + vat + DELIMITER + company_email + DELIMITER + company_phone + DELIMITER + append_ids(interaction_ids);
             };
 
+            /// @brief Splits interaction ids from string a std::vector<string> for delimiter ;
+            /// @param interaction_ids 
+            /// @return 
+            static vector<string>* get_interaction_ids_from_csv(string interaction_ids){
+                vector<string>* ids = new vector<string>();
+                stringstream ss(interaction_ids);
+
+                rapidcsv::Document string_csv(ss.str(), rapidcsv::LabelParams(-1, -1), rapidcsv::SeparatorParams(';'));
+
+                if(string_csv.GetRowCount() == 0){
+                    return NULL;
+                }
+                else
+                {
+                    for(int i = 0; i < string_csv.GetRowCount(); i++){
+                        ids->push_back(string_csv.GetCell<string>(i, 0));
+                    }
+                }
+                return ids;
+            }
         };
 }
 #pragma endregion definitions

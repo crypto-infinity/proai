@@ -1,15 +1,19 @@
 /*
-Client Class Interface
-This class represents the Client object with custom methods for manipulation.
+Utility Class
+This class contains utility methods that are used in the program. It is a base class for other classes in the program.
+
+Gabriele Scorpaniti, 2025
 */
 
-#ifndef CLIENT_H
-#define CLIENT_H
+#ifndef UTILITY_H
+#define UTILITY_H
 
 #pragma region includes
 
 #include <bits/stdc++.h>
 
+/// @brief RapidCSV Library
+/// @source: https://github.com/d99kris/rapidcsv
 #include "rapidcsv.h"
 
 using namespace std;
@@ -19,7 +23,7 @@ using namespace std;
 #pragma region definitions
 namespace InsuraPro{
 
-    /// @brief Utility Class Definition, represents the Client object with custom methods for manipulation.
+    /// @brief Utility Class, creates constants and static methods for the program.
     class Utility{
         protected:
 
@@ -41,11 +45,11 @@ namespace InsuraPro{
             const string CLIENTS_SCHEMA = "id,name,address,vat,company_email,company_phone,interaction_ids";
 
             /// @brief Schema for the Interaction CSV File
-            const string INTERACTIONS_SCHEMA = "id,type,date,description";
+            const string INTERACTIONS_SCHEMA = "id,name,type,date,description";
 
         public:
 
-            /// @brief Random string generator
+            /// @brief Random string generator.
             /// @source: https://medium.com/@ryan_forrester_/c-random-string-generation-practical-guide-e7e789b348d4
             /// @param length random string lenght (int)
             /// @return the generated random string
@@ -63,7 +67,7 @@ namespace InsuraPro{
                 return random_string;
             }
 
-            /// @brief Converts a string to lowercase
+            /// @brief Converts a string to lowercase.
             /// @param data string to convert
             /// @return the converted string
             static const string toLower(string data){
@@ -82,12 +86,11 @@ namespace InsuraPro{
                 cout << "4. 'modifica_cliente' : modifica i dati di un cliente presente nel CRM.\n";
                 cout << "5. 'elimina_cliente' : elimina un cliente presente nel CRM.\n";
                 cout << "6. 'ricerca_cliente' : ricerca un cliente per il suo contatto.\n";
-                cout << "7. 'interazione' : aggiungi un'interazione ad un cliente presente nel CRM.\n";
+                cout << "7. 'aggiunta_interazione' : aggiungi un'interazione ad un cliente presente nel CRM.\n";
                 cout << "8. 'mostra_interazioni' : visualizza l'elenco delle interazioni di un cliente presente nel CRM.\n";
                 cout << "9. 'cerca_interazioni' : cerca un'interazione per tipo o data.\n";
                 cout << "10. 'chiudi' : chiudi il programma.\n";
             }
-
     };
 }
 #pragma endregion definitions

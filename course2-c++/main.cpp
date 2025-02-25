@@ -1,8 +1,17 @@
+/*
+Main file for the InsuraPro CRM system, a simple CRM system for managing clients and interactions.
+
+This file contains the main program loop, which handles the program execution and user input.
+The program is structured in a way that allows for easy extensibility and maintainability, with a focus on modularity and reusability.
+The program is divided into 3 main classes: Client, Contact, and Interaction, each with its own set of methods and properties.
+The program uses the RapidCSV library for handling CSV files, which allows for easy reading and writing of CSV files.
+
+Gabriele Scorpaniti, 2025
+*/
+
 #pragma region includes
 
 #include <bits/stdc++.h>
-#include <iostream>
-#include <fstream>
 
 // includes each class header file
 #include "crm.h"
@@ -12,11 +21,11 @@ using namespace InsuraPro;
 
 #pragma endregion includes
 
-#pragma region main
+#pragma region Main
 /// @brief Main program loop, handles program execution
-/// @return 
 int main(){
 
+    // Instantiates a new CRM object, ready for multiple CRM support with multiple CSVs
     InsuraPro::CRM* crm = new InsuraPro::CRM();
 
     #pragma region command_inputs
@@ -29,7 +38,7 @@ int main(){
     cmd_inputs["modifica_cliente"] = 4;
     cmd_inputs["elimina_cliente"] = 5;
     cmd_inputs["ricerca_cliente"] = 6;
-    cmd_inputs["interazione"] = 7;
+    cmd_inputs["aggiunta_interazione"] = 7;
     cmd_inputs["mostra_interazioni"] = 8;
     cmd_inputs["cerca_interazioni"] = 9;
     cmd_inputs["chiudi"] = 10;
@@ -67,7 +76,6 @@ int main(){
             case 2:
                 cout << "\nAggiungi uno o più clienti nel CRM." << endl;
                 crm->add_clients();
-
                 break;
 
             case 3:
@@ -79,10 +87,12 @@ int main(){
                 cout << "\nAggiorna un cliente nel CRM.\n" << endl;
                 crm->update_client();
                 break;
+
             case 5:
                 cout << "\nElimina un cliente nel CRM.\n" << endl;
                 crm->delete_client();
                 break;
+
             case 6:
                 cout << "\nRicerca i clienti del CRM.\n" << endl;
                 found_clients = crm->search_clients();
@@ -94,20 +104,22 @@ int main(){
                     }
                 }
                 else cout << "\nNessun cliente trovato con le informazioni indicate." << endl;
+                found_clients->clear();
                 break;
+
             case 7:
                 cout << "\nAggiungi nuove interazioni nel CRM.\n" << endl;
                 crm->add_interactions();
                 break;
+
             case 8:
                 cout << "\nVisualizza tutte le interazioni presenti.\n" << endl;
                 crm->view_interactions();
                 break;
+
             case 9:
                 cout << "\nRicerca le interazioni presenti.\n" << endl;
                 found_interactions = crm->search_interactions();
-
-                //DA RIVEDERE
 
                 if(found_interactions->size() > 0){
                     cout << "\nSono stati trovati " << found_interactions->size() << " interazioni che corrispondono alla ricerca: " << endl << endl;
@@ -116,8 +128,9 @@ int main(){
                     }
                 }
                 else cout << "\nNessuna interazione trovata con le informazioni indicate." << endl;
-
+                found_interactions->clear();
                 break;
+
             case 10:
                 cout << "\nGrazie per aver usato InsuraPro, a presto!" << endl;
                 cmd = "chiudi";
@@ -127,6 +140,7 @@ int main(){
                 cout << "\nComando non riconosciuto." << endl;
                 Utility::show_help();
                 break;
+
             }
         }
     }
@@ -137,61 +151,16 @@ int main(){
     
     return 0;
 }
-#pragma endregion main
 
-    
-    // InsuraPro::Contact* Contact = new InsuraPro::Contact("Mario", "Rossi", "ViaRoma1", "test@email.com", "+393322749965");
-    // cout << Contact->to_string() << endl;
-
-    /*
-    try{
-        InsuraPro::Contact* Contacte = new InsuraPro::Contact("Mario", "Rossi", "ViaRoma1", "); //errore?
-    }
-    catch(std::invalid_argument& e){
-        cout << "Errore: " << e.what() << endl;
-    }
-    */
-    
-    //cout << Contact->to_csv() << endl;
-
-    // try{
-    //     Document doc("contacts.csv", LabelParams(0, 0));
-    //     string name = doc.GetCell<string>("name", 2);
-    //     cout << name << endl;
-    //     doc.SetCell<string>("name", 2, "Giovanni"); -> modifica il valore della cella
-    //     doc.Save(); -> salva le modifiche
-    // }
-    // catch(fstream::failure& e){
-    //     cout << "Errore: " << e.what() << endl;
-    // }
-    
-
-
-    //vector<string> getRow = doc.GetRow<string>(0);
-    //cout << getRow[0] << endl;
-
-
-    // ifstream file("Contacts.csv");
-
-    // int i = 0;
-    // string text;
-    // while(getline(file, text)){
-    //     cout << text << endl;
-    //     i++;
-    // }
-
-
-    // crm->get_clients().InsertRow<string>(crm->get_clients().GetRowCount(), {customer->get_name(), customer->get_address(), customer->get_vat(), customer->get_company_email(), customer->get_company_phone(), customer->get_contact_ids_as_string()}, customer->get_id());
-    // crm->get_clients().Save();
-
-    //cout << crm->get_clients().GetRow<string>(customer->get_id());
-    //crm->add_client();
-
+#pragma endregion Main
 
 /*
-REferenze
+Referenze
 https://stackoverflow.com/questions/20326356/how-to-remove-all-the-occurrences-of-a-char-in-c-string
 
 -  Relazione 1:1 tra Contact e Client
 -  Relazione 1:N tra Client e Interaction
+-  RapidCSV per la gestione dei file CSV
+-  Gestione delle eccezioni per errori di I/O
+-  3 Classi principali: Client, Contact, Interaction
 */
