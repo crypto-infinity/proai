@@ -56,6 +56,7 @@ int main(){
             getline(cin, cmd);
 
             vector<Client*>* found_clients;
+            vector<Interaction*>* found_interactions;
 
             switch (cmd_inputs[cmd])
             {
@@ -65,7 +66,7 @@ int main(){
 
             case 2:
                 cout << "\nAggiungi uno o più clienti nel CRM." << endl;
-                crm->add_client();
+                crm->add_clients();
 
                 break;
 
@@ -92,16 +93,30 @@ int main(){
                         cout << client->to_string() << endl;
                     }
                 }
-                else cout << "\nNessun cliente trovato con la query indicata." << endl;
+                else cout << "\nNessun cliente trovato con le informazioni indicate." << endl;
                 break;
             case 7:
-                //crm->add_interaction();
+                cout << "\nAggiungi nuove interazioni nel CRM.\n" << endl;
+                crm->add_interactions();
                 break;
             case 8:
-                //crm->view_interactions();
+                cout << "\nVisualizza tutte le interazioni presenti.\n" << endl;
+                crm->view_interactions();
                 break;
             case 9:
-                //crm->search_interactions();
+                cout << "\nRicerca le interazioni presenti.\n" << endl;
+                found_interactions = crm->search_interactions();
+
+                //DA RIVEDERE
+
+                if(found_interactions->size() > 0){
+                    cout << "\nSono stati trovati " << found_interactions->size() << " interazioni che corrispondono alla ricerca: " << endl << endl;
+                    for(Interaction* interaction : *found_interactions){
+                        cout << interaction->to_string() << endl;
+                    }
+                }
+                else cout << "\nNessuna interazione trovata con le informazioni indicate." << endl;
+
                 break;
             case 10:
                 cout << "\nGrazie per aver usato InsuraPro, a presto!" << endl;

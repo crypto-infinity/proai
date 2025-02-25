@@ -22,6 +22,7 @@ namespace InsuraPro{
     /// @brief Utility Class Definition, represents the Client object with custom methods for manipulation.
     class Utility{
         protected:
+
             /// @brief Constant for the CSV Delimiter
             const char DELIMITER = ',';
 
@@ -32,6 +33,17 @@ namespace InsuraPro{
             /// @brief Regular Expression for Phone Numbers
             string phone_regex = R"(^\+(?:[0-9] ?){6,14}[0-9]$)";
             const regex PHONE_REGEX{phone_regex};
+
+            /// @brief Schema for the Contact CSV File
+            const string CONTACTS_SCHEMA = "id,name,surname,address,email,phone,client_id";
+
+            /// @brief Schema for the Client CSV File
+            const string CLIENTS_SCHEMA = "id,name,address,vat,company_email,company_phone,interaction_ids";
+
+            /// @brief Schema for the Interaction CSV File
+            const string INTERACTIONS_SCHEMA = "id,type,date,description";
+
+        public:
 
             /// @brief Random string generator
             /// @source: https://medium.com/@ryan_forrester_/c-random-string-generation-practical-guide-e7e789b348d4
@@ -54,23 +66,13 @@ namespace InsuraPro{
             /// @brief Converts a string to lowercase
             /// @param data string to convert
             /// @return the converted string
-            const string toLower(string data){
+            static const string toLower(string data){
                 string result = data;
                 std::transform(result.begin(), result.end(), result.begin(),
                                [](unsigned char c) { return std::tolower(c); });
                 return result;
             }
 
-            /// @brief Schema for the Contact CSV File
-            const string CONTACTS_SCHEMA = "id,name,surname,address,email,phone,client_id";
-
-            /// @brief Schema for the Client CSV File
-            const string CLIENTS_SCHEMA = "id,name,address,vat,company_email,company_phone";
-
-            /// @brief Schema for the Interaction CSV File
-            const string INTERACTIONS_SCHEMA = "id,client_id,type,date,notes";
-
-        public:
             /// @brief Show an help menu with all possible commands.
             static void show_help(){
                 cout << "\nI comandi disponibili sono i seguenti:\n";

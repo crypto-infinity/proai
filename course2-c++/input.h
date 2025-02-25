@@ -262,14 +262,14 @@ namespace InsuraPro {
                         while(true){
                             try{
                                 string type = "";
-                                cout << "Tipo (obbligatorio): ";
+                                cout << "Tipo (appuntamento/contratto) - obbligatorio: ";
                                 getline(cin, type);
+                                Utility::toLower(type);
                                 interaction = new Interaction(type);
-                                
+                                break;
                             }
                             catch(exception& e){
                                 cout << "\nErrore: " << e.what() << ". Riprova." << endl;
-                                return NULL;
                             }
                         }
 
@@ -277,13 +277,13 @@ namespace InsuraPro {
                         while(true){
                             try{
                                 string date = "";
-                                cout << "Data: ";
+                                cout << "Data dell'interazione: ";
                                 getline(cin, date);
                                 interaction->set_date(date);
+                                break;
                             }
                             catch(exception& e){
                                 cout << "\nErrore: " << e.what() << ". Riprova." << endl;
-                                return NULL;
                             }
                         }
 
@@ -293,10 +293,10 @@ namespace InsuraPro {
                                 cout << "Descrizione: ";
                                 getline(cin, description);
                                 interaction->set_description(description);
+                                break;
                             }
                             catch(exception& e){
                                 cout << "\nErrore: " << e.what() << ". Riprova." << endl;
-                                return NULL;
                             }
                         }
 
@@ -317,8 +317,6 @@ namespace InsuraPro {
                     while(user_key != "no");
 
                     return interactions_to_add;
-
-                    //da integrare con integrazione clienti
 
                 }catch(exception& e){
                     cout << "Errore nella creazione dell'interazione: " << e.what() << endl;

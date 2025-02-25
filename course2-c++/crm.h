@@ -113,7 +113,7 @@ namespace InsuraPro {
             /// @return bool, true if the client was added successfully, false otherwise.
             /// @throws exception if an error occurs.
             /// @see get_client_input for user input.
-            bool add_client(){
+            bool add_clients(){
                 try{
                     auto [clients_to_add, contacts_to_add] = get_client_input();
 
@@ -133,21 +133,25 @@ namespace InsuraPro {
                         for(int i = 0; i < clients_to_add->size(); i++){
                             clients.InsertRow<string>(
                                     clients.GetRowCount(), 
-                                        {(*clients_to_add)[i]->get_name(), 
+                                        {
+                                            (*clients_to_add)[i]->get_name(), 
                                             (*clients_to_add)[i]->get_address(), 
                                             (*clients_to_add)[i]->get_vat(), 
                                             (*clients_to_add)[i]->get_company_email(), 
-                                            (*clients_to_add)[i]->get_company_phone()}, 
+                                            (*clients_to_add)[i]->get_company_phone()
+                                        }, 
                                             (*clients_to_add)[i]->get_id()
                                 );
                             contacts.InsertRow<string>(
                                 contacts.GetRowCount(), 
-                                    {(*contacts_to_add)[i]->get_name(), 
+                                    {
+                                        (*contacts_to_add)[i]->get_name(), 
                                         (*contacts_to_add)[i]->get_surname(), 
                                         (*contacts_to_add)[i]->get_address(), 
                                         (*contacts_to_add)[i]->get_email(), 
                                         (*contacts_to_add)[i]->get_phone(), 
-                                        (*contacts_to_add)[i]->get_client_id()}, 
+                                        (*contacts_to_add)[i]->get_client_id()
+                                    }, 
                                         (*contacts_to_add)[i]->get_id()
                                 );
                         }
@@ -252,8 +256,7 @@ namespace InsuraPro {
                         (*clients_to_add)[0]->get_company_phone()
                     });
 
-                    int rowCount = contacts.GetRowCount();
-                    for(int i = 0; i < rowCount; i++){
+                    for(int i = 0; i < contacts.GetRowCount(); i++){
                         if(contacts.GetCell<string>("client_id", i) == client_id_to_modify){
                             contacts.SetRow<string>(i, {
                                 (*contacts_to_add)[0]->get_name(), 
@@ -350,7 +353,7 @@ namespace InsuraPro {
             vector<Client*>* search_clients(){
 
                 string search_key = "";
-                cout << "Inserisci la query di ricerca: ";
+                cout << "Inserisci i parametri di ricerca: ";
                 getline(cin, search_key);
 
                 vector<Client*>* found_clients = new vector<Client*>();
@@ -394,11 +397,152 @@ namespace InsuraPro {
             #pragma region InteractionMgmt
             // Interaction Management Methods
 
-            void add_interaction(const Interaction& interaction);
-            void view_interactions(const string& client_id) const;            
-            void update_interaction(const string& interaction_id, const Interaction& updated_interaction);
-            void delete_interaction(const string& interaction_id);
-            Interaction* search_interaction(const string& interaction_id);
+            /// @brief Adds a new interaction to the CRM.
+            /// @return bool, true if the interaction was added successfully, false otherwise.
+            /// @throws exception if an error occurs.
+            bool add_interactions(){
+                try{
+                    vector<Interaction*>* interactions_to_add = get_interaction_input();
+    
+                    cout << "\nRicerca ora il cliente al quale collegare le interazioni inserite." << endl;
+                    //TO DO: aggiungere collegamento con 1 o più clienti.
+                    vector<Client*>* clients_to_update = search_clients();
+
+                    if(clients_to_update->size() == 0){
+                        cout << "Nessun cliente trovato, riprova l'aggiunta." << endl;
+                        return false;
+                    }
+    
+                    cout << "Clienti trovati: " << endl;
+    
+                    vector<tuple<int,string>> client_data(clients_to_update->size());
+    
+                    for(int i = 0; i < clients_to_update->size(); i++){
+                        cout << (i + 1) << ". " << (*clients_to_update)[i]->get_name() << " " << (*clients_to_update)[i]->get_address() << endl;
+                        client_data[i] = {i ,(*clients_to_update)[i]->get_id()};
+                    }
+    
+                    string input = "";
+                    string client_id_to_modify = "";
+                    int index;
+                    cout << "\nA quale di questi vuoi associare le interazioni inserite? Inserisci il numero corrispondente: ";
+                    getline(cin, input);
+
+                    while(true){
+                        try{
+                            index = stoi(input) - 1;
+                            client_id_to_modify = get<1>(client_data[index]);
+                            break;
+                        }
+                        catch(exception& e){
+                            cout << "Indice non valido. Riprova: ";
+                            getline(cin, input);
+                        }
+                    }
+
+                    string ack;
+    
+                    cout << "\nVuoi davvero aggiungere " << interactions_to_add->size() << " interazioni nel CRM? (si/no): ";
+                    getline(cin, ack);
+    
+                    while(ack != "si" && ack != "no"){
+                        cout << "Comando non valido.";
+                        cout << "\nVuoi davvero aggiungere " << interactions_to_add->size() << " interazioni nel CRM? (si/no): ";
+                        getline(cin, ack);
+                    }
+    
+                    if(ack == "si"){
+                        string ids_to_set = clients.GetCell<string>("interaction_ids", client_id_to_modify);
+
+                        for(int i = 0; i < interactions_to_add->size(); i++){
+
+                            ids_to_set =  (*interactions_to_add)[i]->get_id() + ";" + ids_to_set;
+
+                            interactions.InsertRow<string>(
+                                interactions.GetRowCount(), 
+                                    {
+                                        (*interactions_to_add)[i]->get_type(), 
+                                        (*interactions_to_add)[i]->get_date(), 
+                                        (*interactions_to_add)[i]->get_description()
+                                    }, 
+                                        (*interactions_to_add)[i]->get_id()
+                            );
+                        }
+                        clients.SetCell<string>("interaction_ids", client_id_to_modify, ids_to_set);
+    
+                        clients.Save();
+                        interactions.Save();
+    
+                        cout << "\nInterazioni aggiunte con successo!" << endl;
+                        return true;
+                    }else{
+                        cout << "\nOperazione annullata." << endl;
+                        return false;
+                    }
+                }catch(exception& e){
+                    cout << "\nErrore nell'aggiunta delle interazioni: " << e.what() << endl;
+                    return false;
+                }
+            };
+
+            /// @brief Prints all interactions in the CRM.
+            void view_interactions(){
+                unsigned int rowCount = interactions.GetRowCount();
+                vector<string> rowIds = interactions.GetRowNames();
+
+                if(rowCount == 0){
+                    cout << "Nessuna interazione presente nel CRM." << endl;
+                    return;
+                }
+
+                //prints all CSV row, without endlines between attributes
+                for (string id : rowIds){
+                    cout 
+                        << "Interazione ID: " << id
+                        << " | Tipo: " << interactions.GetCell<string>("type", id) 
+                        << " | Data: " << interactions.GetCell<string>("date", id) 
+                        << " | Descrizione: " << interactions.GetCell<string>("description", id) 
+                        << endl;
+                }
+            }
+
+            /// @brief Searches for an Interaction in the CRM by various criterias (Type, Date).
+            /// @return pointer to std::vector<Interaction> populated by matching criterias on interaction objects.
+            vector<Interaction*>* search_interactions(){
+                
+                string search_key = "";
+                cout << "Inserisci i parametri di ricerca: ";
+                getline(cin, search_key);
+
+                vector<Interaction*>* found_interactions = new vector<Interaction*>();
+
+                try{
+                    for(int i = 0; i < interactions.GetRowCount(); i++){
+    
+                        if( //Search criterias, can be adapted as needed
+                            toLower(interactions.GetCell<string>("type", i)).find(toLower(search_key)) != string::npos || 
+                            toLower(interactions.GetCell<string>("date", i)).find(toLower(search_key)) != string::npos ||
+                            toLower(interactions.GetCell<string>("description", i)).find(toLower(search_key)) != string::npos
+                          ){
+
+                            Interaction* found_interaction = new Interaction(
+                                (*found_interactions)[i]->get_id(), //segmentation fault
+                                interactions.GetCell<string>("type", i),
+                                interactions.GetCell<string>("date", i),
+                                interactions.GetCell<string>("description", i)
+                            );
+
+                            found_interactions->push_back(found_interaction);
+                        }
+    
+                    }
+                }
+                catch(exception& e){
+                    cout << "Errore nella ricerca dell'interazione: " << e.what() << endl;
+                }
+
+                return found_interactions;
+            }
 
             #pragma endregion InteractionMgmt
 

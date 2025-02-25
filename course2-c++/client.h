@@ -26,7 +26,7 @@ namespace InsuraPro{
             string company_email;
             string company_phone;
 
-            vector<string> interaction_ids;
+            vector<string> interaction_ids = {};
 
             string append_ids(const vector<string>& object_ids) const {
                 string ids;
