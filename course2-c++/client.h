@@ -218,16 +218,19 @@ namespace InsuraPro{
                 vector<string>* ids = new vector<string>();
                 stringstream ss(interaction_ids);
 
-                rapidcsv::Document string_csv(ss.str(), rapidcsv::LabelParams(-1, -1), rapidcsv::SeparatorParams(';'));
+                rapidcsv::Document string_csv(ss, rapidcsv::LabelParams(-1, -1), rapidcsv::SeparatorParams(';'));
 
-                if(string_csv.GetRowCount() == 0){
+                // ids_vector will contain n elements + 1, the last one being empty
+                vector<string> ids_vector = string_csv.GetRow<string>(0);
+
+                if(interaction_ids == ""){
                     return NULL;
                 }
                 else
                 {
-                    for(int i = 0; i < string_csv.GetRowCount(); i++){
+                    //iterate over the ids_vector, skipping the last empty element
+                    for(int i = 0; i < ids_vector.size() - 1; i++){
                         ids->push_back(string_csv.GetCell<string>(i, 0));
-                        cout << ids << endl;
                     }
                 }
                 return ids;

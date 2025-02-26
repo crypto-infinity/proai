@@ -118,7 +118,7 @@ int main(){
                 break;
 
             case 9:
-                cout << "\nRicerca le interazioni presenti.\n" << endl;
+                cout << "\nRicerca le interazioni per cliente.\n" << endl;
                 found_interactions = crm->search_interactions();
 
                 if(found_interactions->size() > 0){
