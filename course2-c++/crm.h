@@ -410,32 +410,28 @@ namespace InsuraPro {
     
                     cout << "\nRicerca ora il cliente al quale collegare le interazioni inserite." << endl;
                     //TO DO: aggiungere collegamento con 1 o più clienti.
-                    vector<Client*>* clients_to_update = search_clients();
+                    vector<Client*>* updated_clients = search_clients();
 
-                    if(clients_to_update->size() == 0){
+                    if(updated_clients->size() == 0){
                         cout << "Nessun cliente trovato, riprova l'aggiunta." << endl;
                         return false;
                     }
     
                     cout << "Clienti trovati: " << endl;
     
-                    vector<tuple<int,string>> client_data(clients_to_update->size());
-    
-                    for(int i = 0; i < clients_to_update->size(); i++){
-                        cout << (i + 1) << ". " << (*clients_to_update)[i]->get_name() << " " << (*clients_to_update)[i]->get_address() << endl;
-                        client_data[i] = {i ,(*clients_to_update)[i]->get_id()};
+                    for(int i = 0; i < updated_clients->size(); i++){
+                        cout << (i + 1) << ". " << (*updated_clients)[i]->get_name() << " " << (*updated_clients)[i]->get_address() << endl;
                     }
     
                     string input = "";
-                    string client_id_to_modify = "";
                     int index;
+
                     cout << "\nA quale di questi vuoi associare le interazioni inserite? Inserisci il numero corrispondente: ";
                     getline(cin, input);
 
                     while(true){
                         try{
                             index = stoi(input) - 1;
-                            client_id_to_modify = get<1>(client_data[index]);
                             break;
                         }
                         catch(exception& e){
@@ -454,26 +450,31 @@ namespace InsuraPro {
                         cout << "\nVuoi davvero aggiungere " << interactions_to_add->size() << " interazioni nel CRM? (si/no): ";
                         getline(cin, ack);
                     }
-    
+                    
                     if(ack == "si"){
-                        string ids_to_set = clients.GetCell<string>("interaction_ids", client_id_to_modify);
+                        try{
+                            string ids_to_set = clients.GetCell<string>("interaction_ids", index);
+                            for(Interaction* i : *interactions_to_add){
+                                
+                                ids_to_set =  i->get_id() + ";" + ids_to_set;
 
-                        for(int i = 0; i < interactions_to_add->size(); i++){
+                                interactions.InsertRow<string>(
+                                    interactions.GetRowCount(), 
+                                        {
+                                            i->get_name(),
+                                            i->get_type(), 
+                                            i->get_date(), 
+                                            i->get_description()
+                                        }, 
+                                            i->get_id()
+                                );
+                            }
 
-                            ids_to_set =  (*interactions_to_add)[i]->get_id() + ";" + ids_to_set;
-
-                            interactions.InsertRow<string>(
-                                interactions.GetRowCount(), 
-                                    {
-                                        (*interactions_to_add)[i]->get_name(),
-                                        (*interactions_to_add)[i]->get_type(), 
-                                        (*interactions_to_add)[i]->get_date(), 
-                                        (*interactions_to_add)[i]->get_description()
-                                    }, 
-                                        (*interactions_to_add)[i]->get_id()
-                            );
+                            clients.SetCell<string>("interaction_ids", index, ids_to_set);
                         }
-                        clients.SetCell<string>("interaction_ids", client_id_to_modify, ids_to_set);
+                        catch(out_of_range& e){
+                            cout << "Out of range: " << e.what() << endl;
+                        }
     
                         clients.Save();
                         interactions.Save();

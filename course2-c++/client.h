@@ -227,6 +227,7 @@ namespace InsuraPro{
                 {
                     for(int i = 0; i < string_csv.GetRowCount(); i++){
                         ids->push_back(string_csv.GetCell<string>(i, 0));
+                        cout << ids << endl;
                     }
                 }
                 return ids;

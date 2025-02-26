@@ -264,7 +264,7 @@ namespace InsuraPro {
                                 string name = "";
                                 cout << "Nome (obbligatorio): ";
                                 getline(cin, name);
-                                interaction = new Interaction(name);
+                                interaction = new Interaction(name=name);
                                 break;
                             }
                             catch(exception& e){
@@ -315,8 +315,6 @@ namespace InsuraPro {
                         }
 
                         interactions_to_add->push_back(interaction);
-
-                        //collegamento con istanza cliente
 
                         if(multiple_entry){
                             cout << "Vuoi aggiungere un'altra interazione? (si/no): ";

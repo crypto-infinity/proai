@@ -1,8 +1,3 @@
 id,name,address,vat,company_email,company_phone,interaction_ids
-cli-30dfa75xw5,Visura,"Via Visura 1","PIVA Visura",email@email.it,+393366225542,int-hrwlafcuqb;
-cli-2qi4lukbsl,HerbertSPA,,,email@email2.it,+393356523
-cli-dxnh69ksvt,BissSPA,,,email@email.it,+393365232
-cli-h76joa1ulg,arturo,"via fasulla 123",persa,emailfarlocca@hotmailmlml.com,+3901212746530
-cli-fdm1ojgovw,Cl1,,,,
-cli-iuwy1wlg7n,Cl2,,,,
-cli-3z72etd2c2,Etherea,"Via Silvio Pellico 13",IT09987856,etherea@etherea.it,+3901215448859,int-vl6j3i07kf;int-wiom5siagi;int-7x8u3f2dmf;
+cli-zrvyxd28ah,"Visura SPA",,,,
+cli-thpmazknym,Visura,SPA,,,
