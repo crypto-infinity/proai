@@ -5,6 +5,9 @@ This class represents the Client object with custom methods for manipulation.
 
 #pragma region includes
 
+#ifndef __CLIENT_H_INCLUDED__
+#define __CLIENT_H_INCLUDED__
+
 #include <bits/stdc++.h>
 
 #include "utility.h"
@@ -13,17 +16,29 @@ using namespace std;
 
 #pragma endregion includes
 
-#pragma region definitions
+#pragma region Client
+
 namespace InsuraPro{
     /// @brief Client Class Definition, represents the Client object with custom methods for manipulation. 
     class Client : Utility {
         private:
+
+            /// @brief Client ID, generated randomly
             string id = "cli-" + generate_random_string(10);
 
+            /// @brief Name Attribute
             string name;
+
+            /// @brief Address Attribute
             string address;
+
+            /// @brief VAT Attribute
             string vat;
+
+            /// @brief Company Email Attribute, must be a valid email
             string company_email;
+
+            /// @brief Company Phone Attribute, must be a valid phone number
             string company_phone;
 
             vector<string> interaction_ids = {};
@@ -41,6 +56,7 @@ namespace InsuraPro{
             
         public:
 
+            /// @brief Default Constructor for the Client Object, without ID specification
             Client(string _name, string _address="", string _vat="", string _company_email="test@email.com", string _company_phone="+3333333333"){
                 
                 set_name(_name);
@@ -51,6 +67,7 @@ namespace InsuraPro{
 
             };
 
+            /// @brief Constructor for the Client Object, with ID specification, used for instantiating from CSV
             Client(string _id, string _name, string _address="", string _vat="", string _company_email="test@email.com", string _company_phone="+3333333333"){
                 
                 id = _id;
@@ -63,9 +80,6 @@ namespace InsuraPro{
             };
         
             #pragma region Getters
-            /*
-            Getters Methods
-            */
 
             /// @brief Getter Method for the Client ID
             /// @return string
@@ -114,12 +128,10 @@ namespace InsuraPro{
             string get_interaction_ids_as_string() const{
                 return append_ids(interaction_ids);
             };
+
             #pragma endregion Getters
 
             #pragma region Setters
-            /*
-            Setters Methods
-            */
 
             /// @brief Setter Method for the Client Name
             /// @param _name string, the new name
@@ -173,25 +185,7 @@ namespace InsuraPro{
 
             #pragma endregion Setters
 
-            /*
-            Comparison Methods
-            */
-
-            /// @brief Compare Operator for the Client Class
-            /// @param Client Client
-            /// @return bool
-            bool operator==(const Client& Client) const{
-                return id == Client.id;
-            };
-
-            /// @brief Overloaded Operator for the Client Class
-            /// @param Client Client
-            /// @return bool
-            bool operator!=(const Client& Client) const{
-                return id != Client.id;
-            };
-
-            //Object string representation
+            #pragma region Representation
 
             /// @brief String Representation of the Client Object
             /// @return string
@@ -212,8 +206,8 @@ namespace InsuraPro{
             };
 
             /// @brief Splits interaction ids from string a std::vector<string> for delimiter ;
-            /// @param interaction_ids 
-            /// @return 
+            /// @param interaction_ids the string to parse
+            /// @return std::vector<string>, containing all the interaction ids
             static vector<string>* get_interaction_ids_from_csv(string interaction_ids){
                 vector<string>* ids = new vector<string>();
                 stringstream ss(interaction_ids);
@@ -235,6 +229,22 @@ namespace InsuraPro{
                 }
                 return ids;
             }
+
+            /// @brief Prints all clients in the CRM, from a vector<Client*>.
+            
+            static void print_search_results(vector<Client*>* &found_clients){
+                if(found_clients->size() > 0){
+                    cout << "\nSono stati trovati " << found_clients->size() << " clienti che corrispondono alla ricerca: " << endl << endl;
+                    for(Client* client : *found_clients){
+                        cout << client->to_string() << endl;
+                    }
+                }
+                else cout << "\nNessun cliente trovato con le informazioni indicate." << endl;
+            }
+            
+            #pragma endregion Representation
         };
 }
-#pragma endregion definitions
+#pragma endregion Client
+
+#endif

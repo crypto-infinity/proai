@@ -30,6 +30,7 @@ namespace InsuraPro {
 
             /// @brief Gets User Input and creates a Contact object, validating input.
             /// @return Contact*, a pointer to the created Contact object.
+            /// @param multiple_entry bool, if true, allows for multiple Contact objects to be created.
             vector<Contact*>* get_contact_input(bool multiple_entry=true){
                 try{
                     string user_key = "";
@@ -132,6 +133,8 @@ namespace InsuraPro {
 
             /// @brief Gets User Input and creates a Client object with associated contact, if specified, validating input.
             /// @return tuple< vector<Client*> , vector<Contact*> >, a tuple containing the created Client and Contact objects linked together.
+            /// @param multiple_entry bool, if true, allows for multiple Client objects to be created.
+            /// @param connect_contact bool, if true, connects a Contact object to a Client object by its ID.
             tuple< vector<Client*>* , vector<Contact*>* > get_client_input(bool multiple_entry=true, bool connect_contact=true){
                 try{
                     string user_key = "";
@@ -227,11 +230,11 @@ namespace InsuraPro {
                         }
 
                         if(multiple_entry){ 
-                            cout << "Vuoi aggiungere un altro cliente? (si/no): ";
+                            cout << "\nVuoi aggiungere un altro cliente? (si/no): ";
                             getline(cin, user_key);
                             while(user_key != "si" && user_key != "no"){
                                 cout << "Comando non valido.";
-                                cout << "Vuoi aggiungere un altro cliente? (si/no): ";
+                                cout << "\nVuoi aggiungere un altro cliente? (si/no): ";
                                 getline(cin, user_key);
                             }
                         }
@@ -249,6 +252,7 @@ namespace InsuraPro {
 
             /// @brief Gets User Input and creates an Interaction object, validating input.
             /// @return std::vector<Interaction*>*, a vector representing the created Interaction objects.
+            /// @param multiple_entry bool, if true, allows for multiple Interaction objects to be created.
             vector<Interaction*>* get_interaction_input(bool multiple_entry=true){
                 try{
                     string user_key = "";
@@ -335,7 +339,48 @@ namespace InsuraPro {
                     return NULL;
                 }
             }
+      
+            /// @brief Asks for user confirmation, returns true if the user confirms, false otherwise.
+            /// @return bool, true if the user confirms, false otherwise.
+            /// @param message string, the message to display to the user.
+            bool get_user_confirm(string message){
+                string ack;
 
+                cout << endl << message;
+
+                getline(cin, ack);
+                while(ack != "si" && ack != "no"){
+                    cout << "Comando non valido.";
+                    cout << endl << message;
+                    getline(cin, ack);
+                }
+
+                if(ack == "si") return true;
+                else return false;
+            }
+
+            /// @brief Gets the index of a user input, validating the input.
+            /// @return int, the index of the user input.
+            /// @param message string, the message to display to the user.
+            int get_user_index(string message){
+                string input = "";
+                string client_id_to_delete = "";
+                int index;
+                cout << message;
+                getline(cin, input);
+
+                while(true){
+                    try{
+                        index = stoi(input) - 1;
+                        break;
+                    }
+                    catch(exception& e){
+                        cout << "Indice non valido. Riprova.";
+                        getline(cin, input);
+                    }
+                }
+                return index;
+            }
     };
 }
 #pragma endregion Input

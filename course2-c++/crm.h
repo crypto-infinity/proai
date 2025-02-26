@@ -45,7 +45,7 @@ namespace InsuraPro {
         
         public:
 
-            /// @brief Default constructor for the CRM class, initializes the CSV files and handles exceptions.
+            /// @brief Default constructor for the CRM class, initializes the CSV files and handles exceptions for io errors.
             CRM(){
                 try{
                     if(fs::exists(CONTACTS_FILE)) contacts = rapidcsv::Document(CONTACTS_FILE, rapidcsv::LabelParams(0, 0));
@@ -115,18 +115,9 @@ namespace InsuraPro {
                 try{
                     auto [clients_to_add, contacts_to_add] = get_client_input();
 
-                    string ack;
+                    string message = string("Vuoi davvero aggiungere ") + to_string(clients_to_add->size()) + " clienti nel CRM? (si/no): ";
 
-                    cout << "\nVuoi davvero aggiungere " << clients_to_add->size() << " clienti nel CRM? (si/no): ";
-
-                    getline(cin, ack);
-                    while(ack != "si" && ack != "no"){
-                        cout << "Comando non valido.";
-                        cout << "\nVuoi davvero aggiungere " << clients_to_add->size() << " clienti nel CRM? (si/no): ";
-                        getline(cin, ack);
-                    }
-
-                    if(ack == "si"){
+                    if(get_user_confirm(message)){
 
                         for(int i = 0; i < clients_to_add->size(); i++){
                             clients.InsertRow<string>(
@@ -213,39 +204,17 @@ namespace InsuraPro {
                     client_data[i] = {i ,(*clients_to_update)[i]->get_id()};
                 }
 
-                string input = "";
-                string client_id_to_modify = "";
-                int index;
-                cout << "\nQuale vuoi modificare? Inserisci il numero corrispondente: ";
-                getline(cin, input);
-
-                while(true){
-                    try{
-                        index = stoi(input) - 1;
-                        client_id_to_modify = get<1>(client_data[index]);
-                        break;
-                    }
-                    catch(exception& e){
-                        cout << "Indice non valido. Riprova.";
-                        getline(cin, input);
-                    }
-                }
+                int index = get_user_index("\nQuale vuoi modificare? Inserisci il numero corrispondente: ");
+                string client_id_to_modify = get<1>(client_data[index]);
 
                 cout << "\nInserisci i nuovi dati del cliente: " << endl;
                 auto [clients_to_add, contacts_to_add] = get_client_input(false,true);
 
-                string ack;
+                string message = string("Vuoi davvero aggiornare il cliente ") 
+                                    + clients.GetCell<string>("name",client_id_to_modify)
+                                    + " clienti nel CRM? (si/no): ";
 
-                cout << "\nVuoi davvero aggiornare il cliente " << clients.GetCell<string>("name",client_id_to_modify) << " ? (si/no): ";
-                getline(cin, ack);
-
-                while(ack != "si" && ack != "no"){
-                    cout << "Comando non valido.";
-                    cout << "\nVuoi davvero aggiornare il cliente? (si/no): ";
-                    getline(cin, ack);
-                }
-
-                if(ack == "si"){
+                if(get_user_confirm(message)){
 
                     clients.SetRow<string>(client_id_to_modify, {
                         (*clients_to_add)[0]->get_name(), 
@@ -276,7 +245,6 @@ namespace InsuraPro {
                     cout << "\nOperazione annullata." << endl;
                     return false;
                 }
-
                 return false;
             }
 
@@ -299,34 +267,14 @@ namespace InsuraPro {
                     client_data[i] = {i ,(*clients_to_delete)[i]->get_id()};
                 }
 
-                string input = "";
-                string client_id_to_delete = "";
-                int index;
-                cout << "\nQuale vuoi eliminare? Inserisci il numero corrispondente: ";
-                getline(cin, input);
+                int index = get_user_index("Quale vuoi eliminare? Inserisci il numero corrispondente: ");
+                string client_id_to_delete = get<1>(client_data[index]);
 
-                while(true){
-                    try{
-                        index = stoi(input) - 1;
-                        client_id_to_delete = get<1>(client_data[index]);
-                        break;
-                    }
-                    catch(exception& e){
-                        cout << "Indice non valido. Riprova.";
-                        getline(cin, input);
-                    }
-                }
+                string message = string("\nVuoi davvero eliminare il cliente ") 
+                                + clients.GetCell<string>("name",client_id_to_delete) 
+                                + " con contatti e interazioni ad esso associate? (si/no): ";
 
-                cout << "\nVuoi davvero eliminare il cliente " << clients.GetCell<string>("name",client_id_to_delete) << " con contatti e interazioni ad esso associate? (si/no): ";
-                getline(cin, input);
-
-                while(input != "si" && input != "no"){
-                    cout << "Comando non valido.";
-                    cout << "\nVuoi davvero eliminare il cliente? (si/no): ";
-                    getline(cin, input);
-                }
-
-                if(input == "si"){
+                if(get_user_confirm(message)){
 
                     //removes client
                     clients.RemoveRow(client_id_to_delete);
@@ -337,7 +285,6 @@ namespace InsuraPro {
                     
                     //remove interactions associated
                     vector<string>* interaction_ids_to_delete = Client::get_interaction_ids_from_csv(clients.GetCell<string>("interaction_ids", client_id_to_delete));
-
                     for(string interaction_id : *interaction_ids_to_delete) interactions.RemoveRow(interaction_id);
 
                     clients.Save();
@@ -426,38 +373,15 @@ namespace InsuraPro {
                         cout << (i + 1) << ". " << (*updated_clients)[i]->get_name() << " " << (*updated_clients)[i]->get_address() << endl;
                         client_data[i] = {i ,(*updated_clients)[i]->get_id()};
                     }
-    
-                    string input = "";
-                    int index;
-                    string client_id_to_update = "";
 
-                    cout << "\nA quale di questi vuoi associare le interazioni inserite? Inserisci il numero corrispondente: ";
-                    getline(cin, input);
-
-                    while(true){
-                        try{
-                            index = stoi(input) - 1;
-                            client_id_to_update = get<1>(client_data[index]);
-                            break;
-                        }
-                        catch(exception& e){
-                            cout << "Indice non valido. Riprova: ";
-                            getline(cin, input);
-                        }
-                    }
-
-                    string ack;
+                    int index = get_user_index("\nA quale di questi vuoi associare le interazioni inserite? Inserisci il numero corrispondente: ");
+                    string client_id_to_update = get<1>(client_data[index]);
     
-                    cout << "\nVuoi davvero aggiungere " << interactions_to_add->size() << " interazioni nel CRM? (si/no): ";
-                    getline(cin, ack);
-    
-                    while(ack != "si" && ack != "no"){
-                        cout << "Comando non valido.";
-                        cout << "\nVuoi davvero aggiungere " << interactions_to_add->size() << " interazioni nel CRM? (si/no): ";
-                        getline(cin, ack);
-                    }
+                    string message = string("\nVuoi davvero aggiungere ") 
+                                    + to_string(interactions_to_add->size())
+                                    + " interazioni nel CRM? (si/no): ";
                     
-                    if(ack == "si"){
+                    if(get_user_confirm(message)){
                         try{
                             string ids_to_set = clients.GetCell<string>("interaction_ids", client_id_to_update);
                             for(Interaction* i : *interactions_to_add){
@@ -514,22 +438,7 @@ namespace InsuraPro {
                     cout << (i + 1) << ". " << (*clients_to_view )[i]->get_name() << " " << (*clients_to_view )[i]->get_address() << endl;
                 }
 
-                string input = "";
-                int index;
-
-                cout << "\nDi quale di questi clienti vuoi visualizzare le interazioni? Inserisci il numero corrispondente: ";
-                getline(cin, input);
-
-                while(true){
-                    try{
-                        index = stoi(input) - 1;
-                        break;
-                    }
-                    catch(exception& e){
-                        cout << "Indice non valido. Riprova: ";
-                        getline(cin, input);
-                    }
-                }
+                int index = get_user_index("\nDi quale di questi clienti vuoi visualizzare le interazioni? Inserisci il numero corrispondente: ");
 
                 cout << "\nInterazioni del Cliente " << (*clients_to_view)[index]->get_name() << " :" << endl;
                 string ids = clients.GetCell<string>("interaction_ids", (*clients_to_view)[index]->get_id());
@@ -593,7 +502,6 @@ namespace InsuraPro {
             }
 
             #pragma endregion InteractionMgmt
-
             
         };
 }

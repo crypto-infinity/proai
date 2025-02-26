@@ -5,6 +5,9 @@ This class represents the Contact object with custom methods for manipulation.
 
 #pragma region includes
 
+#ifndef __CONTACT_H_INCLUDED__
+#define __CONTACT_H_INCLUDED__
+
 #include <bits/stdc++.h>
 #include <regex>
 
@@ -59,9 +62,7 @@ namespace InsuraPro{
 
             };
         
-            /*
-            Getters Methods
-            */
+            #pragma region Getters
 
             /// @brief Getter Method for the Contact ID
             /// @return string
@@ -105,9 +106,9 @@ namespace InsuraPro{
                 return client_id;
             };
 
-            /*
-            Setters Methods
-            */
+            #pragma endregion Getters
+
+            #pragma region Setters
 
             /// @brief Setter Method for the Contact Name
             /// @param name string, the new name
@@ -166,23 +167,7 @@ namespace InsuraPro{
                 return client_id;
             };
 
-            /*
-            Comparison Methods
-            */
-
-            /// @brief Compare Operator for the Contact Class
-            /// @param Contact Contact
-            /// @return bool
-            bool operator==(const Contact& Contact) const{
-                return id == Contact.id;
-            };
-
-            /// @brief Overloaded Operator for the Contact Class
-            /// @param Contact Contact
-            /// @return bool
-            bool operator!=(const Contact& Contact) const{
-                return id != Contact.id;
-            };
+            #pragma endregion Setters
 
             //Object string representation
 
@@ -199,4 +184,7 @@ namespace InsuraPro{
             };
         };
 }
+
 #pragma endregion Contact
+
+#endif

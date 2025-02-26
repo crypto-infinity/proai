@@ -72,8 +72,7 @@ namespace InsuraPro{
             /// @return the converted string
             static const string toLower(string data){
                 string result = data;
-                std::transform(result.begin(), result.end(), result.begin(),
-                               [](unsigned char c) { return std::tolower(c); });
+                transform(result.begin(), result.end(), result.begin(), [](unsigned char c) { return tolower(c); });
                 return result;
             }
 
@@ -90,6 +89,34 @@ namespace InsuraPro{
                 cout << "8. 'mostra_interazioni' : visualizza l'elenco delle interazioni di un cliente presente nel CRM.\n";
                 cout << "9. 'cerca_interazioni' : cerca un'interazione per tipo o data.\n";
                 cout << "10. 'chiudi' : chiudi il programma.\n";
+            }
+
+            static map<string, int> setup_input(){
+                map<string, int> cmd_inputs;
+
+                cmd_inputs["supporto"] = 1; 
+                cmd_inputs["aggiunta_cliente"] = 2; 
+                cmd_inputs["mostra_clienti"] = 3; 
+                cmd_inputs["modifica_cliente"] = 4;
+                cmd_inputs["elimina_cliente"] = 5;
+                cmd_inputs["ricerca_cliente"] = 6;
+                cmd_inputs["aggiunta_interazione"] = 7;
+                cmd_inputs["mostra_interazioni"] = 8;
+                cmd_inputs["cerca_interazioni"] = 9;
+                cmd_inputs["chiudi"] = 10;
+            
+                cmd_inputs["1"] = 1;
+                cmd_inputs["2"] = 2;
+                cmd_inputs["3"] = 3;
+                cmd_inputs["4"] = 4;
+                cmd_inputs["5"] = 5;
+                cmd_inputs["6"] = 6;
+                cmd_inputs["7"] = 7;
+                cmd_inputs["8"] = 8;
+                cmd_inputs["9"] = 9;
+                cmd_inputs["10"] = 10;
+
+                return cmd_inputs;
             }
     };
 }

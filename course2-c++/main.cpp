@@ -13,7 +13,7 @@ Gabriele Scorpaniti, 2025
 
 #include <bits/stdc++.h>
 
-// includes each class header file
+// includes each other class header file
 #include "crm.h"
 
 using namespace std;
@@ -28,32 +28,13 @@ int main(){
     // Instantiates a new CRM object, ready for multiple CRM support with multiple CSVs
     InsuraPro::CRM* crm = new InsuraPro::CRM();
 
-    #pragma region command_inputs
+    //Variables setup
+    vector<Client*>* found_clients;
+    vector<Interaction*>* found_interactions;
     string cmd = "";
-    map<string, int> cmd_inputs; 
 
-    cmd_inputs["supporto"] = 1; 
-    cmd_inputs["aggiunta_cliente"] = 2; 
-    cmd_inputs["mostra_clienti"] = 3; 
-    cmd_inputs["modifica_cliente"] = 4;
-    cmd_inputs["elimina_cliente"] = 5;
-    cmd_inputs["ricerca_cliente"] = 6;
-    cmd_inputs["aggiunta_interazione"] = 7;
-    cmd_inputs["mostra_interazioni"] = 8;
-    cmd_inputs["cerca_interazioni"] = 9;
-    cmd_inputs["chiudi"] = 10;
-
-    cmd_inputs["1"] = 1;
-    cmd_inputs["2"] = 2;
-    cmd_inputs["3"] = 3;
-    cmd_inputs["4"] = 4;
-    cmd_inputs["5"] = 5;
-    cmd_inputs["6"] = 6;
-    cmd_inputs["7"] = 7;
-    cmd_inputs["8"] = 8;
-    cmd_inputs["9"] = 9;
-    cmd_inputs["10"] = 10;
-    #pragma endregion command_inputs
+    //Setup input commands
+    map<string, int> cmd_inputs = Utility::setup_input(); 
 
     try
     {
@@ -63,9 +44,6 @@ int main(){
         while(cmd != "chiudi"){
             cout << "\nCosa vuoi fare? (\"supporto\" o \"1\" per mostrare tutte le funzioni): ";
             getline(cin, cmd);
-
-            vector<Client*>* found_clients;
-            vector<Interaction*>* found_interactions;
 
             switch (cmd_inputs[cmd])
             {
@@ -104,6 +82,7 @@ int main(){
                     }
                 }
                 else cout << "\nNessun cliente trovato con le informazioni indicate." << endl;
+
                 found_clients->clear();
                 break;
 
@@ -128,6 +107,7 @@ int main(){
                     }
                 }
                 else cout << "\nNessuna interazione trovata con le informazioni indicate." << endl;
+
                 found_interactions->clear();
                 break;
 
