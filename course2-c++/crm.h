@@ -277,7 +277,12 @@ namespace InsuraPro {
                     try{
                         //first, remove interactions associated
                         vector<string>* interaction_ids_to_delete = Client::get_interaction_ids_from_csv(clients.GetCell<string>("interaction_ids", client_id_to_delete));
-                        for(string interaction_id : *interaction_ids_to_delete) interactions.RemoveRow(interaction_id);
+                        if(interaction_ids_to_delete->size() > 0){
+                            for(string interaction_id : *interaction_ids_to_delete){
+                                if(interaction_id == "") break;
+                                interactions.RemoveRow(interaction_id);
+                            } 
+                        }
 
                         //second, remove clients associated
                         int rowCount = contacts.GetRowCount();

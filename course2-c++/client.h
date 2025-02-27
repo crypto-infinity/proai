@@ -210,6 +210,7 @@ namespace InsuraPro{
             /// @param interaction_ids the string to parse
             /// @return std::vector<string>, containing all the interaction ids
             static vector<string>* get_interaction_ids_from_csv(string interaction_ids){
+                if(interaction_ids == "") return new vector<string>();
                 vector<string>* ids = new vector<string>();
                 stringstream ss(interaction_ids);
 
@@ -218,16 +219,11 @@ namespace InsuraPro{
                 // ids_vector will contain n elements + 1, the last one being empty
                 vector<string> ids_vector = string_csv.GetRow<string>(0);
 
-                if(interaction_ids == ""){
-                    return NULL;
+                //iterate over the ids_vector, skipping the last empty element
+                for(int i = 0; i < ids_vector.size() - 1; i++){
+                    ids->push_back(string_csv.GetCell<string>(i, 0));
                 }
-                else
-                {
-                    //iterate over the ids_vector, skipping the last empty element
-                    for(int i = 0; i < ids_vector.size() - 1; i++){
-                        ids->push_back(string_csv.GetCell<string>(i, 0));
-                    }
-                }
+
                 return ids;
             }
 
