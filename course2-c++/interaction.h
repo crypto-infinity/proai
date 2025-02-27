@@ -47,12 +47,16 @@ namespace InsuraPro{
             /// @param _date Date, defaults to ""
             /// @param _description Description, defaults to ""
             Interaction(string _name, string _type="appuntamento", string _date="", string _description=""){
-    
-                set_name(_name);
-                set_type(_type);
-                set_date(_date);
-                set_description(_description);
-    
+                try{
+                    set_name(_name);
+                    set_type(_type);
+                    set_date(_date);
+                    set_description(_description);
+                }
+                catch(exception& e){
+                    cout << "Errore nella creazione dell'interazione: " << e.what() << endl;
+                    throw;
+                }
             };
 
             /// @brief Constructor, instantiates a new Interaction object with an ID

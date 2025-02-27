@@ -203,7 +203,14 @@ namespace InsuraPro {
                     client_data[i] = {i ,(*clients_to_update)[i]->get_id()};
                 }
 
+                
                 int index = get_user_index("\nQuale vuoi modificare? Inserisci il numero corrispondente: ");
+
+                if (index < 0 || index >= clients_to_update->size()) {
+                    cout << "Indice non valido." << endl;
+                    return false;
+                }
+
                 string client_id_to_modify = get<1>(client_data[index]);
 
                 cout << "\nInserisci i nuovi dati del cliente: " << endl;
@@ -267,6 +274,12 @@ namespace InsuraPro {
                 }
 
                 int index = get_user_index("\nQuale vuoi eliminare? Inserisci il numero corrispondente: ");
+
+                if (index < 0 || index >= clients_to_delete->size()) {
+                    cout << "Indice non valido." << endl;
+                    return false;
+                }
+
                 string client_id_to_delete = get<1>(client_data[index]);
 
                 string message = string("\nVuoi davvero eliminare il cliente ") 
@@ -353,6 +366,7 @@ namespace InsuraPro {
                 }
                 catch(exception& e){
                     cout << "Errore nella ricerca del cliente: " << e.what() << endl;
+                    delete found_clients;
                 }
 
                 return found_clients;
@@ -453,6 +467,11 @@ namespace InsuraPro {
                 }
 
                 int index = get_user_index("\nDi quale di questi clienti vuoi visualizzare le interazioni? Inserisci il numero corrispondente: ");
+                
+                if (index < 0 || index >= clients_to_view->size()) {
+                    cout << "Indice non valido." << endl;
+                    return false;
+                }
 
                 cout << "\nInterazioni del Cliente " << (*clients_to_view)[index]->get_name() << " :" << endl;
                 string ids = clients.GetCell<string>("interaction_ids", (*clients_to_view)[index]->get_id());
