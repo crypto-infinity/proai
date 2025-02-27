@@ -164,7 +164,7 @@ namespace InsuraPro{
                     !regex_match(_company_email, EMAIL_REGEX)
                   )
                 {
-                    throw std::invalid_argument("L'email non è valida");
+                    throw std::invalid_argument("Email non valida");
                 }
                 company_email = _company_email;
                 return company_email;
@@ -177,7 +177,8 @@ namespace InsuraPro{
                     !regex_match(_company_phone, PHONE_REGEX)
                   )
                 {
-                    throw std::invalid_argument("Il numero di telefono non è valido");
+                    //0233: è
+                    throw std::invalid_argument("Telefono non valido");
                 }
                 company_phone = _company_phone;
                 return company_phone;

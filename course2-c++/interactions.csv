@@ -1,4 +1,5 @@
 id,name,type,date,description
-int-8rauu9micf,Int,contratto,,
 int-s5mc5aeqb1,Interazione1,contratto,5/06,"Ho venduto 5 BP"
 int-344pc8w0ph,"Interazione 2",contratto,5/07,test
+int-5womt9xf08,TestInt,contratto,5/06,Venduto
+int-6u7r6iyvlm,TestInt2,appuntamento,5/08,Venduto2

@@ -92,12 +92,12 @@ int main(){
                 break;
 
             case 8:
-                cout << "\nVisualizza tutte le interazioni presenti.\n" << endl;
+                cout << "\nVisualizza le interazioni presenti. Ricerca per cliente: \n" << endl;
                 crm->view_interactions();
                 break;
 
             case 9:
-                cout << "\nRicerca le interazioni per cliente.\n" << endl;
+                cout << "\nRicerca le interazioni presenti nel CRM.\n" << endl;
                 found_interactions = crm->search_interactions();
 
                 if(found_interactions->size() > 0){
@@ -126,7 +126,8 @@ int main(){
     }
     catch(exception& e)
     {
-        cout << "Si è verificato un errore: " << e.what() << ". Chiudi il programma e riprova" << endl;
+        //0233: 'è' unicode char
+        cout << "Si \u0233 verificato un errore: " << e.what() << ". Chiudi il programma e riprova" << endl;
     }
     
     return 0;

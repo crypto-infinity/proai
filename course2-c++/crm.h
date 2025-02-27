@@ -175,8 +175,7 @@ namespace InsuraPro {
                 //prints all CSV row, without endlines between attributes
                 for (string id : rowIds){
                     cout 
-                        << "Cliente: " << id
-                        << " | Nome: " << clients.GetCell<string>("name", id) 
+                        << "Nome: " << clients.GetCell<string>("name", id) 
                         << " | Indirizzo Az.: " << clients.GetCell<string>("address", id) 
                         << " | VAT: " << clients.GetCell<string>("vat", id) 
                         << " | Email Az.: " << clients.GetCell<string>("company_email", id) 
@@ -195,12 +194,12 @@ namespace InsuraPro {
                     return false;
                 }
 
-                cout << "Clienti trovati: " << endl;
+                cout << "\nClienti trovati: " << endl;
 
                 vector<tuple<int,string>> client_data(clients_to_update->size());
 
                 for(int i = 0; i < clients_to_update->size(); i++){
-                    cout << (i + 1) << ". " << (*clients_to_update)[i]->get_name() << " " << (*clients_to_update)[i]->get_address() << endl;
+                    cout << (i + 1)  << ". " << (*clients_to_update)[i]->to_string() << endl;
                     client_data[i] = {i ,(*clients_to_update)[i]->get_id()};
                 }
 
@@ -258,16 +257,16 @@ namespace InsuraPro {
                     return false;
                 }
 
-                cout << "Clienti trovati: " << endl;
+                cout << "\nClienti trovati: " << endl;
 
                 vector<tuple<int,string>> client_data(clients_to_delete->size());
 
                 for(int i = 0; i < clients_to_delete->size(); i++){
-                    cout << (i + 1) << ". " << (*clients_to_delete)[i]->get_name() << " " << (*clients_to_delete)[i]->get_address() << endl;
+                    cout << (i + 1)  << ". " << (*clients_to_delete)[i]->to_string() << endl;
                     client_data[i] = {i ,(*clients_to_delete)[i]->get_id()};
                 }
 
-                int index = get_user_index("Quale vuoi eliminare? Inserisci il numero corrispondente: ");
+                int index = get_user_index("\nQuale vuoi eliminare? Inserisci il numero corrispondente: ");
                 string client_id_to_delete = get<1>(client_data[index]);
 
                 string message = string("\nVuoi davvero eliminare il cliente ") 
@@ -275,25 +274,35 @@ namespace InsuraPro {
                                 + " con contatti e interazioni ad esso associate? (si/no): ";
 
                 if(get_user_confirm(message)){
+                    try{
+                        //first, remove interactions associated
+                        vector<string>* interaction_ids_to_delete = Client::get_interaction_ids_from_csv(clients.GetCell<string>("interaction_ids", client_id_to_delete));
+                        for(string interaction_id : *interaction_ids_to_delete) interactions.RemoveRow(interaction_id);
 
-                    //removes client
-                    clients.RemoveRow(client_id_to_delete);
+                        //second, remove clients associated
+                        int rowCount = contacts.GetRowCount();
+                        for(int i = 0; i < rowCount; i++){
+                            if(i >= contacts.GetRowCount()) break;
+                            if(contacts.GetCell<string>("client_id", i) == client_id_to_delete){
+                                contacts.RemoveRow(i);
+                            } 
+                        } 
 
-                    //remove clients associated
-                    int rowCount = contacts.GetRowCount();
-                    for(int i = 0; i < rowCount; i++) if(contacts.GetCell<string>("client_id", i) == client_id_to_delete) contacts.RemoveRow(i);
-                    
-                    //remove interactions associated
-                    vector<string>* interaction_ids_to_delete = Client::get_interaction_ids_from_csv(clients.GetCell<string>("interaction_ids", client_id_to_delete));
-                    for(string interaction_id : *interaction_ids_to_delete) interactions.RemoveRow(interaction_id);
+                        //removes client
+                        clients.RemoveRow(client_id_to_delete);
 
-                    clients.Save();
-                    contacts.Save();
-
-                    cout << "\nCliente eliminato con successo!" << endl;
-                    return true;
-
-                }else{
+                        //save changes
+                        clients.Save();
+                        contacts.Save();
+                        interactions.Save();
+    
+                        cout << "\nCliente eliminato con successo!" << endl;
+                        return true;
+                    }catch(out_of_range e){
+                        cout << "Out of range: " << e.what() << endl;
+                    }
+                }
+                else{
                     cout << "\nOperazione annullata." << endl;
                     return false;
                 }
@@ -428,7 +437,7 @@ namespace InsuraPro {
                 vector<Client*>* clients_to_view = search_clients();
 
                 if(clients_to_view ->size() == 0){
-                    cout << "Nessun cliente trovato, riprova l'aggiunta." << endl;
+                    cout << "\nNessun cliente trovato." << endl;
                     return false;
                 }
 
@@ -473,17 +482,15 @@ namespace InsuraPro {
 
                 try{
                     for(int i = 0; i < interactions.GetRowCount(); i++){
-    
                         if( //Search criterias, can be adapted as needed
                             toLower(interactions.GetCell<string>("name", i)).find(toLower(search_key)) != string::npos ||
                             toLower(interactions.GetCell<string>("type", i)).find(toLower(search_key)) != string::npos || 
                             toLower(interactions.GetCell<string>("date", i)).find(toLower(search_key)) != string::npos ||
-                            toLower(interactions.GetCell<string>("description", i)).find(toLower(search_key)) != string::npos ||
-                            toLower(clients.GetCell<string>("name", i)).find(toLower(search_key)) != string::npos
+                            toLower(interactions.GetCell<string>("description", i)).find(toLower(search_key)) != string::npos
                           ){
 
                             Interaction* found_interaction = new Interaction(
-                                interactions.GetRowName(i), //segmentation fault
+                                interactions.GetRowName(i),
                                 interactions.GetCell<string>("name", i),
                                 interactions.GetCell<string>("type", i),
                                 interactions.GetCell<string>("date", i),

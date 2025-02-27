@@ -137,7 +137,7 @@ namespace InsuraPro {
             /// @param connect_contact bool, if true, connects a Contact object to a Client object by its ID.
             tuple< vector<Client*>* , vector<Contact*>* > get_client_input(bool multiple_entry=true, bool connect_contact=true){
                 try{
-                    string user_key = "";
+                    string user_key = "no";
                     vector<Client*>* clients_to_add = new vector<Client*>();
                     vector<Contact*>* contacts_to_add = new vector<Contact*>();
 

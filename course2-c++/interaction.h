@@ -148,7 +148,7 @@ namespace InsuraPro{
             /// @brief Returns a string representation of the Interaction object
             /// @return string
             string to_string(){
-                return "Interazione ID: " + id + ". Tipo: " + type + ", Data: " + date + ", Descrizione: " + description;
+                return "Interazione ID: " + id + ", Nome: " + name + ". Tipo: " + type + ", Data: " + date + ", Descrizione: " + description;
             };
 
         };
