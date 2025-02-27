@@ -1,3 +1,4 @@
 id,name,address,vat,company_email,company_phone,interaction_ids
 cli-cvkcxbxmbp,Azienda1,,IT099876859,email@email.it,+393556558895,int-6u7r6iyvlm;int-5womt9xf08;
 cli-bvzi9obxvy,Azienda2,,,,,
+cli-62q1f2hrvr,Azienda1,"Via di Test, 5",IT09988776,email@azienda.it,+393475885625,int-i3xhsvq8ff;

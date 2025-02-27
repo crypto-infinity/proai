@@ -12,6 +12,9 @@ Gabriele Scorpaniti, 2025
 #pragma region includes
 
 #include <bits/stdc++.h>
+#include <iostream>
+#include <io.h>
+#include <fcntl.h>
 
 // includes each other class header file
 #include "crm.h"
@@ -52,7 +55,7 @@ int main(){
                 break;
 
             case 2:
-                cout << "\nAggiungi uno o più clienti nel CRM." << endl;
+                cout << "\nAggiungi uno o piu' clienti nel CRM." << endl;
                 crm->add_clients();
                 break;
 
@@ -126,22 +129,10 @@ int main(){
     }
     catch(exception& e)
     {
-        //0233: 'è' unicode char
-        cout << "Si \u0233 verificato un errore: " << e.what() << ". Chiudi il programma e riprova" << endl;
+        cout << "Si e' verificato un errore: " << e.what() << ". Chiudi il programma e riprova" << endl;
     }
     
     return 0;
 }
 
 #pragma endregion Main
-
-/*
-Referenze
-https://stackoverflow.com/questions/20326356/how-to-remove-all-the-occurrences-of-a-char-in-c-string
-
--  Relazione 1:1 tra Contact e Client
--  Relazione 1:N tra Client e Interaction
--  RapidCSV per la gestione dei file CSV
--  Gestione delle eccezioni per errori di I/O
--  3 Classi principali: Client, Contact, Interaction
-*/
