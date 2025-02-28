@@ -58,33 +58,24 @@ namespace InsuraPro{
 
             /// @brief Default Constructor for the Client Object, without ID specification
             Client(string _name, string _address="", string _vat="", string _company_email="test@email.com", string _company_phone="+3333333333"){
-                try{
+
                     set_name(_name);
                     set_address(_address);
                     set_vat(_vat);
                     set_company_email(_company_email);
                     set_company_phone(_company_phone);
-                }
-                catch(exception& e){
-                    cout << "Errore nella creazione del cliente.";
-                    throw e;
-                }
             };
 
             /// @brief Constructor for the Client Object, with ID specification, used for instantiating from CSV
             Client(string _id, string _name, string _address="", string _vat="", string _company_email="test@email.com", string _company_phone="+3333333333"){
-                try{
+
                     id = _id;
                     set_name(_name);
                     set_address(_address);
                     set_vat(_vat);
                     set_company_email(_company_email);
                     set_company_phone(_company_phone);
-                }
-                catch(exception& e){
-                    cout << "Errore nella creazione del cliente.";
-                    throw e;
-                }
+                    
             };
         
             #pragma region Getters

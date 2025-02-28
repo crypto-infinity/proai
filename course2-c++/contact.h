@@ -52,17 +52,13 @@ namespace InsuraPro{
             /// @param _email Contact Email
             /// @param _phone Contact Phone Number
             Contact(string _name, string _surname = "", string _address = "", string _email = "", string _phone = "", string _client_id = ""){
-                try {
                     set_name(_name);
                     set_surname(_surname);
                     set_address(_address);
                     set_email(_email);
                     set_phone(_phone);
                     set_client_id(_client_id);
-                } catch (const exception& e) {
-                    cout << "Errore nella creazione del contatto: " << e.what() << endl;
-                    throw;
-                }
+
             };
         
             #pragma region Getters
