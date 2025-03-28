@@ -1,40 +1,40 @@
 # Master in AI Engineering - Profession.AI
 
-Benvenuti alla repository del corso di **Machine Learning** di **Profession.AI**, dedicato al mondo dell'**AI Engineering**. Qui troverete risorse, esempi di codice e materiale didattico per approfondire diversi aspetti dell'AI e del Machine Learning.
+Welcome to the repository for the **Machine Learning** course based on my personal experience at Profession.AI, dedicated to the world of **AI Engineering**. Here, you will find resources, code examples, and educational material to delve deeper into various aspects of AI and Machine Learning.
 
 ---
 
-## Contenuti del Corso
+## Course Content
 
-### 1. **Introduzione alla Programmazione**
-- Fondamenti di **Python**
-- Basi di **C++**
+### 1. **Introduction to Programming**
+- Fundamentals of **Python**
+- Basics of **C++**
 
-### 2. **Modelli di Machine Learning**
-- Tecniche di **Machine Learning Statistico**
-  - Regressione lineare, alberi decisionali, SVM, e altro.
+### 2. **Machine Learning Models**
+- **Statistical Machine Learning Techniques**
+  - Linear regression, decision trees, SVM, and more.
 - **Deep Learning**
-  - Introduzione alle reti neurali e framework principali.
-  - Utilizzo di **PyTorch** per la creazione di modelli.
+  - Introduction to neural networks and main frameworks.
+  - Using **PyTorch** to create models.
 - **Reinforcement Learning**
-  - Apprendimento tramite feedback e agenti intelligenti.
+  - Learning through feedback and intelligent agents.
 
-### 3. **Intelligenza Artificiale Generativa**
-- Modelli come GANs e Diffusion Models.
-- Introduzione al **Natural Language Processing (NLP)** con strumenti generativi.
+### 3. **Generative Artificial Intelligence**
+- Models like GANs and Diffusion Models.
+- Introduction to **Natural Language Processing (NLP)** with generative tools.
 
 ### 4. **MLOps**
-- Continuous Integration/Continuous Deployment (CI/CD) per ML.
-- Gestione e monitoraggio dei modelli in produzione.
+- Continuous Integration/Continuous Deployment (CI/CD) for ML.
+- Managing and monitoring models in production.
 
 ### 5. **Explainable AI (XAI)**
-- Tecniche per interpretare e spiegare i modelli di ML.
+- Techniques to interpret and explain ML models.
 
 ---
 
-## Requisiti
+## Requirements
 
-Prima di iniziare, assicurati di avere i seguenti prerequisiti:
+Before starting, make sure you have the following prerequisites:
 - **Python** >= 3.8
-- Ambiente di sviluppo (es. Jupyter, VS Code, Google Colab)
-- Librerie come NumPy, Pandas, Scikit-learn, PyTorch, ecc.
+- Development environment (e.g., Jupyter, VS Code, Google Colab)
+- Libraries like NumPy, Pandas, Scikit-learn, PyTorch, etc.
