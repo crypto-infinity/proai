@@ -1,4 +1,4 @@
-# Corso di Machine Learning - Profession.AI
+# Master in AI Engineering - Profession.AI
 
 Benvenuti alla repository del corso di **Machine Learning** di **Profession.AI**, dedicato al mondo dell'**AI Engineering**. Qui troverete risorse, esempi di codice e materiale didattico per approfondire diversi aspetti dell'AI e del Machine Learning.
 
