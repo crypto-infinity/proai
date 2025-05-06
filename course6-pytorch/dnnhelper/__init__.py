@@ -136,7 +136,7 @@ class Experiment:
     
     
     # Early stopping
-    use_early_stopping: bool
+    use_early_stopping: bool = False
     patience: int = 10
     min_delta: float = 0
     early_stopping: object = None
@@ -170,7 +170,6 @@ class Experiment:
         
         self.optimizer = self.optimizer(params=self.model.parameters(),
                                 lr=self.lr)
-        self.optimizer = self.optimizer.to(self.device)
         
         # Initialize the early stopping object if required
         if self.use_early_stopping:
@@ -178,7 +177,7 @@ class Experiment:
             early_stopping_folder = os.path.join(self.checkpoints_folder, "early_stopping", self.name)
             os.makedirs(early_stopping_folder, exist_ok = True)
             
-            self.early_stopping = EarlyStopping(save_path=early_stopping_folder,
+            self.early_stopping = EarlyStopping(save_path=early_stopping_folder+self.name,
                                                 patience=self.patience,
                                                 min_delta=self.min_delta)
         
