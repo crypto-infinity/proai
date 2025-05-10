@@ -9,24 +9,116 @@ import os
 import torch
 import random
 import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
 
 from dataclasses import dataclass, field
 
-def __post_init__(self):
-    
-    seed = 42
+class Helper:
+    """
+    Helper functions for CNN training and evaluation.
+    """
 
-    random.seed(seed)
-    os.environ['PYTHONHASHSEED'] = str(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
+    @staticmethod
+    def plot_images(dataset, classes, iteration=0):
+       """
+       Visualizes a batch of images from the dataset.
+       Args:
+            dataset: PyTorch dataset.
+            classes: List of class names.
+            iteration: Iteration number for batch visualization.
+       """
+
+       num_row = 2
+       num_col = 5
+       fig, axes = plt.subplots(num_row, num_col, figsize=(10*num_row,2*num_col))
+
+       for i in range(num_row*num_col):
+           ax = axes[i//num_col, i%num_col]
+           ax.imshow(Helper.back_to_image(dataset[iteration * num_row * num_col + i][0]))
+           ax.set_title('{}'.format(classes[int(dataset[iteration * num_row * num_col + i][1])]))
+
+       plt.tight_layout()
+       plt.show()
+       iteration += 1
+
+    @staticmethod
+    def plot_class_distribution(dataset, type="training"):
+        """
+        Pltots the class distribution of a dataset.
+        Args:
+            dataset: PyTorch dataset.
+            type: Type of dataset (training, validation or test).
+        """
+
+        #Check if the dataset is a valid PyTorch dataset
+        if not hasattr(dataset, 'targets'):
+            raise ValueError("Il dataset non è un dataset PyTorch valido.")
+
+        #Dataset classes count
+        df = pd.DataFrame(dataset.targets, columns=['label'])
+        df['label'] = df['label'].map(lambda x: dataset.classes[x])
+        
+        #Plotting
+        df['label'].value_counts().plot(kind='bar', figsize=(12, 6))
+        plt.title(f'Distribuzione delle classi nel {type} set')
+        plt.xlabel('Classi')
+        plt.ylabel('Numero di samples')
+        plt.xticks(rotation=45)
+        plt.show()
+
+    @staticmethod
+    def back_to_image(img):
+        """
+        Convert a tensor to an image.
+        
+        Args:
+        tensor : torch.Tensor
+            The input tensor to be converted to an image.
+        
+        Returns:
+        numpy.ndarray
+            The converted image as a NumPy array.
+        """
+
+        img = img / 2 + 0.5
+        npimg = img.numpy()
+        return np.transpose(npimg, (1, 2, 0))
+
+    @staticmethod
+    def set_seed(seed):
+        """
+        Set the random seed for reproducibility.
+        
+        Args:
+        seed : int
+            The random seed to be set.
+        """
+        
+        random.seed(seed)
+        os.environ['PYTHONHASHSEED'] = str(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
+
+    @staticmethod
+    def set_device():
+        """
+        Set the device to GPU if available, otherwise CPU.
+        
+        Returns:
+        torch.device
+            The device to be used for computations.
+        """
+        
+        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class EarlyStopping:
     """
     Implements early stopping to terminate training when the validation loss does not improve for a specified number of epochs.
     
-    Parameters
-    ----------
+    Args:
     save_path : str
         Path to save the model checkpoint.
     patience : int
@@ -76,8 +168,7 @@ class Experiment:
     This class handles the initialization of the model, loss function, optimizer, and early stopping mechanism.
     It also provides methods for training and validating the model, as well as saving checkpoints.
     
-    Parameters
-    ----------
+    Args:
     name : str
         Name of the experiment.
     checkpoints_folder : str
