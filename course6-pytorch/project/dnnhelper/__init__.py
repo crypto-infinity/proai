@@ -20,7 +20,7 @@ class Helper:
     """
 
     @staticmethod
-    def plot_images(dataset, classes, iteration=0):
+    def plot_images(dataset, classes, iteration=0, num_row=3, num_col=5):
        """
        Visualizes a batch of images from the dataset.
        Args:
@@ -29,8 +29,6 @@ class Helper:
             iteration: Iteration number for batch visualization.
        """
 
-       num_row = 2
-       num_col = 5
        fig, axes = plt.subplots(num_row, num_col, figsize=(10*num_row,2*num_col))
 
        for i in range(num_row*num_col):
