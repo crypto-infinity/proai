@@ -5,13 +5,23 @@ This module provides a simple interface for creating and training deep neural ne
 Author: Gabriele Scorpaniti, 2025
 """
 
+# Standard Libraries
 import os
-import torch
 import random
+
+# Data Science Libraries
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+#PyTorch Libraries
+import torch
+import torch.utils.data as data_utils
+
+#Scikit-learn Library
+from sklearn.model_selection import KFold
+
+#Dataclass Library
 from dataclasses import dataclass, field
 
 class Helper:
@@ -223,7 +233,6 @@ class Experiment:
     val_mse: float = None
     lr: float = 1e-5
     
-    
     # Early stopping
     use_early_stopping: bool = False
     patience: int = 10
@@ -234,7 +243,7 @@ class Experiment:
     epochs: int = 600
     epoch_count: list = field(default_factory=list)
     
-    #Training and validation loss arrays
+    #Training and validation loss
     val_loss_values: list = field(default_factory=list)
     train_loss_values: list = field(default_factory=list)
     
@@ -274,3 +283,145 @@ class Experiment:
         self.checkpoints_folder = os.path.join(self.checkpoints_folder, "checkpoints", self.name)
         os.makedirs(self.checkpoints_folder, exist_ok = True)
         self.checkpoint_save_path = os.path.join(self.checkpoints_folder, self.checkpoint_name)
+
+class Trainer:
+    """
+    Class to manage the training of a deep neural network.
+    This class handles the initialization of the model, loss function, optimizer, and early stopping mechanism.
+    It also provides methods for training and validating the model, as well as saving checkpoints.
+    """
+
+    @staticmethod
+    def fit(exp:Experiment, trainloader, valloader):
+
+        exp.train_loss_values = []
+        exp.val_loss_values = []
+
+        for epoch in range(exp.epochs):
+
+            exp.model.train()
+            loss_epoch = 0
+
+            for i, data in enumerate(trainloader, 0):
+
+                X = data[0]
+                y = data[1]
+
+                y_pred = exp.model(X)
+                loss = exp.loss_fn(y_pred, y)
+
+                loss_epoch += loss
+
+                exp.optimizer.zero_grad()
+
+                loss.backward()
+
+                exp.optimizer.step()
+
+            loss_val = 0
+            exp.model.eval()
+
+            for j, data in enumerate(valloader, 0):
+
+                X = data[0]
+                y = data[1]
+
+                with torch.no_grad():
+
+                    y_pred = exp.model(X)
+                    loss = exp.loss_fn(y_pred.squeeze(-1), y)
+
+                    loss_val += loss
+
+            exp.epoch_count.append(epoch)
+            exp.train_loss_values.append(loss_epoch.detach().numpy()/len(trainloader))
+            exp.val_loss_values.append(loss_val.detach().numpy()/len(valloader))
+
+            print(f"Epoca: {epoch} |  Train Loss: {loss_epoch/len(trainloader)} | Val Loss: {loss_val/len(valloader)} ")
+
+            if exp.use_early_stopping:
+                exp.early_stopping(loss_val/len(valloader), exp.model)
+                if exp.early_stopping.early_stop:
+                    print("Early stopping all'epoca:", epoch)
+                    exp.model.load_state_dict(torch.load(exp.checkpoint_save_path))
+                    break
+
+    @staticmethod
+    def evaluate(exp:Experiment, testloader):
+        """
+        Evaluate the model on the test set.
+        
+        Args:
+            exp: Experiment object containing the model and evaluation parameters.
+            testloader: DataLoader for the test set.
+        """
+        
+        exp.model.eval()
+        loss_test = 0
+
+        for i, data in enumerate(testloader, 0):
+
+            X = data[0]
+            y = data[1]
+
+            with torch.no_grad():
+
+                y_pred = exp.model(X)
+                loss = exp.loss_fn(y_pred.squeeze(-1), y)
+
+                loss_test += loss
+
+        return loss_test.item()/len(testloader)
+
+
+## Modify this with subsetsampler
+@dataclass    
+class CrossValidation():
+    """
+    Manages cross-validation for training and evaluating a model.
+    """
+    
+    def __init__(self, experiments: list[Experiment], X: torch.tensor, y: torch.tensor, test_dl: data_utils.DataLoader, n_splits, shuffle=True, seed=None):
+        """
+        Initialize the cross-validation object.
+        
+        Args:
+            n_splits: Number of splits for cross-validation.
+            shuffle: Whether to shuffle the data before splitting.
+            random_state: Random seed for reproducibility.
+        """
+        
+        self.dataset = data_utils.TensorDataset(X, y)
+        self.test_dl = test_dl
+
+        self.experiments = experiments
+
+        self.n_splits = n_splits
+        self.shuffle = shuffle
+        self.seed = seed
+
+    def split_and_train(self):
+        """
+        Splits the dataset into training and validation sets and trains the model.
+        """
+
+        # Kfold cross-validation
+        
+        kf = KFold(n_splits=self.n_splits, shuffle=self.shuffle, random_state=self.seed)
+
+        for fold, (train_idx, val_idx) in enumerate(kf.split(self.X)):
+
+            train_sampler = data_utils.SubsetRandomSampler(train_idx)
+            val_sampler = data_utils.SubsetRandomSampler(val_idx)
+
+            # Creating DataLoaders for this fold
+            train_dl_split = data_utils.DataLoader(self.dataset, batch_size=64, shuffle=True, sampler=train_sampler)
+            val_dl_split = data_utils.DataLoader(self.dataset, batch_size=64, shuffle=False, sampler=val_sampler)
+            
+            for exp in self.experiments:
+                # Training models for this fold
+                Trainer.fit(exp, train_dl_split, val_dl_split)
+
+                # Evaluate the fold on the test set
+                test_loss = Trainer.evaluate(exp, self.test_dl)
+                print(f"Test Loss for {exp.name} on fold {fold}: {test_loss}")
