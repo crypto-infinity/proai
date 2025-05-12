@@ -172,8 +172,7 @@ class EarlyStopping:
 @dataclass
 class Experiment:
     """
-    Class to manage the training of a deep neural network.
-    This class handles the initialization of the model, loss function, optimizer, and early stopping mechanism.
+    Class to manage the training of a deep neural network. Requires a model, loss function, and optimizer.
     It also provides methods for training and validating the model, as well as saving checkpoints.
     
     Args:
@@ -235,17 +234,11 @@ class Experiment:
     
     # Early stopping
     use_early_stopping: bool = False
-    patience: int = 10
+    patience: int = 5
     min_delta: float = 0
-    early_stopping: object = None
     
     #Epochs
     epochs: int = 600
-    epoch_count: list = field(default_factory=list)
-    
-    #Training and validation loss
-    val_loss_values: list = field(default_factory=list)
-    train_loss_values: list = field(default_factory=list)
     
     #Plotting arguments
     color: str = "blue"
@@ -260,29 +253,38 @@ class Experiment:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
         # Initialize the model, loss function, and optimizer
-        self.model = self.model()
         self.model = self.model.to(self.device)
-        
+
         self.loss_fn = self.loss_fn()
         self.loss_fn = self.loss_fn.to(self.device)
-        
-        self.optimizer = self.optimizer(params=self.model.parameters(),
-                                lr=self.lr)
+
+        self.optimizer = self.optimizer(self.model.parameters(), lr=self.lr)
+
+        # Initialize loss lists
+        self.train_loss_values = []
+        self.val_loss_values = []
         
         # Initialize the early stopping object if required
         if self.use_early_stopping:
-        
-            early_stopping_folder = os.path.join(self.checkpoints_folder, "early_stopping", self.name)
+
+            early_stopping_folder = os.path.join(self.checkpoints_folder, "early_stoppings", self.name)
             os.makedirs(early_stopping_folder, exist_ok = True)
             
             self.early_stopping = EarlyStopping(save_path=early_stopping_folder+self.name,
                                                 patience=self.patience,
                                                 min_delta=self.min_delta)
         
-        # Checkpointing
+        # Checkpointing setup
         self.checkpoints_folder = os.path.join(self.checkpoints_folder, "checkpoints", self.name)
         os.makedirs(self.checkpoints_folder, exist_ok = True)
         self.checkpoint_save_path = os.path.join(self.checkpoints_folder, self.checkpoint_name)
+
+    def save_checkpoint(self):
+        """
+        Save the model checkpoint.
+        """
+        
+        torch.save(self.model.state_dict(), self.checkpoint_save_path)
 
 class Trainer:
     """
@@ -293,7 +295,13 @@ class Trainer:
 
     @staticmethod
     def fit(exp:Experiment, trainloader, valloader):
+        """
+        Train the model for a specified number of epochs.
+        """
 
+        print(f"Training {exp.name}. Epochs: {exp.epochs} | Learning Rate: {exp.lr} | Batch Size: {trainloader.batch_size}")
+
+        # Reset Loss values
         exp.train_loss_values = []
         exp.val_loss_values = []
 
@@ -302,7 +310,7 @@ class Trainer:
             exp.model.train()
             loss_epoch = 0
 
-            for i, data in enumerate(trainloader, 0):
+            for _, data in enumerate(trainloader, 0):
 
                 X = data[0]
                 y = data[1]
@@ -310,34 +318,37 @@ class Trainer:
                 y_pred = exp.model(X)
                 loss = exp.loss_fn(y_pred, y)
 
+                # Add Accuracy and Precision computation here
+
                 loss_epoch += loss
 
+                # Backpropagation
                 exp.optimizer.zero_grad()
-
                 loss.backward()
-
                 exp.optimizer.step()
 
             loss_val = 0
             exp.model.eval()
 
-            for j, data in enumerate(valloader, 0):
+            for _, data in enumerate(valloader, 0):
 
                 X = data[0]
                 y = data[1]
 
                 with torch.no_grad():
 
+                    # Compute loss
                     y_pred = exp.model(X)
-                    loss = exp.loss_fn(y_pred.squeeze(-1), y)
 
+                    loss = exp.loss_fn(y_pred, y)
                     loss_val += loss
 
-            exp.epoch_count.append(epoch)
+                    # Add Accuracy and Precision computation here
+
             exp.train_loss_values.append(loss_epoch.detach().numpy()/len(trainloader))
             exp.val_loss_values.append(loss_val.detach().numpy()/len(valloader))
 
-            print(f"Epoca: {epoch} |  Train Loss: {loss_epoch/len(trainloader)} | Val Loss: {loss_val/len(valloader)} ")
+            print(f"Epoca: {epoch} |  Train Loss: {loss_epoch/len(trainloader)} | Val Loss: {loss_val/len(valloader)}")
 
             if exp.use_early_stopping:
                 exp.early_stopping(loss_val/len(valloader), exp.model)
@@ -345,6 +356,10 @@ class Trainer:
                     print("Early stopping all'epoca:", epoch)
                     exp.model.load_state_dict(torch.load(exp.checkpoint_save_path))
                     break
+
+            # Save the model checkpoint every 5 epochs
+            if epoch % 5 == 0:
+                exp.save_checkpoint()
 
     @staticmethod
     def evaluate(exp:Experiment, testloader):
@@ -359,7 +374,7 @@ class Trainer:
         exp.model.eval()
         loss_test = 0
 
-        for i, data in enumerate(testloader, 0):
+        for _, data in enumerate(testloader, 0):
 
             X = data[0]
             y = data[1]
@@ -367,8 +382,7 @@ class Trainer:
             with torch.no_grad():
 
                 y_pred = exp.model(X)
-                loss = exp.loss_fn(y_pred.squeeze(-1), y)
-
+                loss = exp.loss_fn(y_pred, y)
                 loss_test += loss
 
         return loss_test.item()/len(testloader)
