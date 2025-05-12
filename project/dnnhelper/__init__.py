@@ -312,15 +312,15 @@ class Trainer:
 
             for _, data in enumerate(trainloader, 0):
 
-                X = data[0]
-                y = data[1]
+                X = data[0].to(exp.device)
+                y = data[1].to(exp.device)
 
                 y_pred = exp.model(X)
                 loss = exp.loss_fn(y_pred, y)
 
                 # Add Accuracy and Precision computation here
 
-                loss_epoch += loss
+                loss_epoch += loss.item()
 
                 # Backpropagation
                 exp.optimizer.zero_grad()
@@ -332,8 +332,8 @@ class Trainer:
 
             for _, data in enumerate(valloader, 0):
 
-                X = data[0]
-                y = data[1]
+                X = data[0].to(exp.device)
+                y = data[1].to(exp.device)
 
                 with torch.no_grad():
 
@@ -341,12 +341,12 @@ class Trainer:
                     y_pred = exp.model(X)
 
                     loss = exp.loss_fn(y_pred, y)
-                    loss_val += loss
+                    loss_val += loss.item()
 
                     # Add Accuracy and Precision computation here
 
-            exp.train_loss_values.append(loss_epoch.detach().numpy()/len(trainloader))
-            exp.val_loss_values.append(loss_val.detach().numpy()/len(valloader))
+            exp.train_loss_values.append(loss_epoch/len(trainloader))
+            exp.val_loss_values.append(loss_val/len(valloader))
 
             print(f"Epoca: {epoch} |  Train Loss: {loss_epoch/len(trainloader)} | Val Loss: {loss_val/len(valloader)}")
 
