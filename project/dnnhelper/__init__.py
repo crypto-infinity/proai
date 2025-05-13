@@ -13,8 +13,10 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 
 #PyTorch Libraries
+from sklearn.metrics import confusion_matrix
 import torch
 import torch.utils.data as data_utils
 from torchmetrics.classification import MulticlassAccuracy, MulticlassF1Score, MulticlassPrecision, MulticlassRecall
@@ -24,106 +26,6 @@ from sklearn.model_selection import KFold
 
 #Dataclass Library
 from dataclasses import dataclass, field
-
-N_CLASSES = 14
-
-class Helper:
-    """
-    Helper functions for CNN training and evaluation.
-    """
-
-    @staticmethod
-    def plot_images(dataset, classes, iteration=0, num_row=3, num_col=5):
-       """
-       Visualizes a batch of images from the dataset.
-       Args:
-            dataset: PyTorch dataset.
-            classes: List of class names.
-            iteration: Iteration number for batch visualization.
-       """
-
-       fig, axes = plt.subplots(num_row, num_col, figsize=(10*num_row,2*num_col))
-
-       for i in range(num_row*num_col):
-           ax = axes[i//num_col, i%num_col]
-           ax.imshow(Helper.back_to_image(dataset[iteration * num_row * num_col + i][0]))
-           ax.set_title('{}'.format(classes[int(dataset[iteration * num_row * num_col + i][1])]))
-
-       plt.tight_layout()
-       plt.show()
-       iteration += 1
-
-    @staticmethod
-    def plot_class_distribution(dataset, type="training"):
-        """
-        Pltots the class distribution of a dataset.
-        Args:
-            dataset: PyTorch dataset.
-            type: Type of dataset (training, validation or test).
-        """
-
-        #Check if the dataset is a valid PyTorch dataset
-        if not hasattr(dataset, 'targets'):
-            raise ValueError("Il dataset non è un dataset PyTorch valido.")
-
-        #Dataset classes count
-        df = pd.DataFrame(dataset.targets, columns=['label'])
-        df['label'] = df['label'].map(lambda x: dataset.classes[x])
-        
-        #Plotting
-        df['label'].value_counts().plot(kind='bar', figsize=(12, 6))
-        plt.title(f'Distribuzione delle classi nel {type} set')
-        plt.xlabel('Classi')
-        plt.ylabel('Numero di samples')
-        plt.xticks(rotation=45)
-        plt.show()
-
-    @staticmethod
-    def back_to_image(img):
-        """
-        Convert a tensor to an image.
-        
-        Args:
-        tensor : torch.Tensor
-            The input tensor to be converted to an image.
-        
-        Returns:
-        numpy.ndarray
-            The converted image as a NumPy array.
-        """
-
-        img = img / 2 + 0.5
-        npimg = img.numpy()
-        return np.transpose(npimg, (1, 2, 0))
-
-    @staticmethod
-    def set_seed(seed):
-        """
-        Set the random seed for reproducibility.
-        
-        Args:
-        seed : int
-            The random seed to be set.
-        """
-        
-        random.seed(seed)
-        os.environ['PYTHONHASHSEED'] = str(seed)
-        np.random.seed(seed)
-        torch.manual_seed(seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(seed)
-
-    @staticmethod
-    def set_device():
-        """
-        Set the device to GPU if available, otherwise CPU.
-        
-        Returns:
-        torch.device
-            The device to be used for computations.
-        """
-        
-        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class EarlyStopping:
     """
@@ -228,12 +130,12 @@ class Experiment:
     checkpoints_folder: str
     checkpoint_name:str
     model: object
-    metrics: list #accuracy, precision, recall, f1
+    metrics: list #[accuracy, precision, recall, f1]
+    n_classes: int
 
     #Model hyperparameters
     loss_fn : object
     optimizer: object
-    val_mse: float = None
     lr: float = 1e-5
 
     #Loss values
@@ -247,12 +149,13 @@ class Experiment:
     min_delta: float = 0
     
     #Epochs
-    epochs: int = 600
+    epochs: int = 50
 
-    #Metrics values
+    #Metrics objects
     train_metrics_objects: dict = field(default_factory=dict)
     val_metrics_objects: dict = field(default_factory=dict)
 
+    #Metrics values
     val_accuracy_values: list = field(default_factory=list)
     val_precision_values: list = field(default_factory=list)
     
@@ -330,6 +233,141 @@ class Experiment:
         """
         
         torch.save(self.model.state_dict(), self.checkpoint_save_path)
+
+class Helper:
+    """
+    Helper functions for CNN training and evaluation.
+    """
+
+    @staticmethod
+    def plot_images(dataset, classes, iteration=0, num_row=3, num_col=5):
+       """
+       Visualizes a batch of images from the dataset.
+       Args:
+            dataset: PyTorch dataset.
+            classes: List of class names.
+            iteration: Iteration number for batch visualization.
+       """
+
+       fig, axes = plt.subplots(num_row, num_col, figsize=(10*num_row,2*num_col))
+
+       for i in range(num_row*num_col):
+           ax = axes[i//num_col, i%num_col]
+           ax.imshow(Helper.back_to_image(dataset[iteration * num_row * num_col + i][0]))
+           ax.set_title('{}'.format(classes[int(dataset[iteration * num_row * num_col + i][1])]))
+
+       plt.tight_layout()
+       plt.show()
+       iteration += 1
+
+    @staticmethod
+    def plot_class_distribution(dataset, type="training"):
+        """
+        Pltots the class distribution of a dataset.
+        Args:
+            dataset: PyTorch dataset.
+            type: Type of dataset (training, validation or test).
+        """
+
+        #Check if the dataset is a valid PyTorch dataset
+        if not hasattr(dataset, 'targets'):
+            raise ValueError("Il dataset non è un dataset PyTorch valido.")
+
+        #Dataset classes count
+        df = pd.DataFrame(dataset.targets, columns=['label'])
+        df['label'] = df['label'].map(lambda x: dataset.classes[x])
+        
+        #Plotting
+        df['label'].value_counts().plot(kind='bar', figsize=(12, 6))
+        plt.title(f'Distribuzione delle classi nel {type} set')
+        plt.xlabel('Classi')
+        plt.ylabel('Numero di samples')
+        plt.xticks(rotation=45)
+        plt.show()
+
+    @staticmethod
+    def plot_loss(exp:Experiment):
+        """
+        Plots the training and validation loss over epochs.
+        
+        Args:
+            exp: Experiment object containing the training history.
+        """
+
+        plt.figure(figsize=(10, 5))
+        plt.plot(exp.epoch_count, exp.train_loss_values, label='Training Loss', color=exp.color, alpha=exp.alpha, **exp.plt_args_training)
+        plt.plot(exp.epoch_count, exp.val_loss_values, label='Validation Loss', color=exp.color, alpha=exp.alpha, **exp.plt_args_validation)
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
+        plt.title(f'Loss over Epochs for {exp.name}')
+        plt.legend()
+        plt.show()
+
+    @staticmethod
+    def plot_confusion_matrix(y_true, y_pred, classes, title=None, cmap=plt.cm.Blues):
+        """
+        Plot the confusion matrix.
+        """
+        cm = confusion_matrix(y_true, y_pred)
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(cm, annot=True, fmt='.2f', cmap=cmap,
+                    xticklabels=classes, yticklabels=classes)
+        plt.ylabel('True label')
+        plt.xlabel('Predicted label')
+        if title:
+            plt.title(title)
+        plt.show()
+
+    @staticmethod
+    def back_to_image(img):
+        """
+        Convert a tensor to an image.
+        
+        Args:
+        tensor : torch.Tensor
+            The input tensor to be converted to an image.
+        
+        Returns:
+        numpy.ndarray
+            The converted image as a NumPy array.
+        """
+
+        img = img / 2 + 0.5
+        npimg = img.numpy()
+        return np.transpose(npimg, (1, 2, 0))
+
+    @staticmethod
+    def set_seed(seed):
+        """
+        Set the random seed for reproducibility.
+        
+        Args:
+        seed : int
+            The random seed to be set.
+        """
+        
+        random.seed(seed)
+        os.environ['PYTHONHASHSEED'] = str(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
+
+    @staticmethod
+    def set_device():
+        """
+        Set the device to GPU if available, otherwise CPU.
+        
+        Returns:
+        torch.device
+            The device to be used for computations.
+        """
+        
+        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
 
 class Trainer:
     """
