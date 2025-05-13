@@ -286,7 +286,7 @@ class Experiment:
             early_stopping_folder = os.path.join(self.checkpoints_folder, "early_stoppings", self.name)
             os.makedirs(early_stopping_folder, exist_ok = True)
             
-            self.early_stopping = EarlyStopping(save_path=early_stopping_folder+self.name,
+            self.early_stopping = EarlyStopping(save_path=os.path.join(early_stopping_folder, self.checkpoint_name),
                                                 patience=self.patience,
                                                 min_delta=self.min_delta)
             
