@@ -342,7 +342,14 @@ class Trainer:
         Train the model for a specified number of epochs, computing exp.metrics.
         """
 
-        print(f"Training {exp.name}. Epochs: {exp.epochs} | Learning Rate: {exp.lr} | Batch Size: {train_dl.batch_size}")
+        # Reset early stopping
+        if exp.use_early_stopping:
+            exp.early_stopping.counter = 0
+            exp.early_stopping.min_val_loss = None
+            exp.early_stopping.early_stop = False
+
+        if verbose:
+            print(f"Training {exp.name}. Epochs: {exp.epochs} | Learning Rate: {exp.lr} | Batch Size: {train_dl.batch_size}")
 
         # Reset Loss values before training
         exp.train_loss_values = []
@@ -413,7 +420,7 @@ class Trainer:
 
             # Print metrics
             if verbose:
-                print(f"Epoca: {epoch} |  Train Loss: {loss_epoch/len(train_dl)} | Val Loss: {loss_val/len(val_dl)} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
+                print(f"Epoca: {epoch} |  Train Loss: {exp.train_loss_values[-1]} | Val Loss: {exp.val_loss_values[-1]} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
 
             if exp.use_early_stopping:
                 exp.early_stopping(loss_val/len(val_dl), exp.model)
@@ -526,7 +533,6 @@ class CrossValidation():
             print(f"Cross Validation for {exp.name} with {self.n_splits} folds")
 
             # Initialize metrics lists
-            cross_train_loss = []
             cross_val_loss = []
             cross_val_accuracy = []
             cross_val_precision = []
@@ -537,23 +543,24 @@ class CrossValidation():
                 val_sampler = data_utils.SubsetRandomSampler(val_idx)
 
                 # Creating DataLoaders for this fold
-                train_dl_split = data_utils.DataLoader(self.train_ds, batch_size=self.batch_size, shuffle=True, sampler=train_sampler)
-                val_dl_split = data_utils.DataLoader(self.val_ds, batch_size=self.batch_size, shuffle=False, sampler=val_sampler)
+                train_dl_split = data_utils.DataLoader(self.train_ds, batch_size=self.batch_size, sampler=train_sampler)
+                val_dl_split = data_utils.DataLoader(self.train_ds, batch_size=self.batch_size, sampler=val_sampler)
 
                 # Training models for this fold
-                Trainer.fit(exp, train_dl_split, val_dl_split)
+                Trainer.fit(exp, train_dl_split, val_dl_split, verbose=self.verbose)
 
-                # Update metrics
-                cross_train_loss.append(exp.train_loss_values)
-                cross_val_loss.append(exp.val_loss_values)
-                cross_val_accuracy.append(exp.val_accuracy_values)
-                cross_val_precision.append(exp.val_precision_values)
+                # Evaluate the model on the validation set
+                val_loss, accuracy, precision = Trainer.evaluate(exp, val_dl_split)
+
+                cross_val_loss.append(float(val_loss))
+                cross_val_accuracy.append(float(accuracy.cpu()) if torch.is_tensor(accuracy) else float(accuracy))
+                cross_val_precision.append(float(precision.cpu()) if torch.is_tensor(precision) else float(precision))
 
                 if self.verbose:
-                    print(f"Fold {fold+1}/{self.n_splits} | Train Loss: {exp.train_loss_values[-1]} | Val Loss: {exp.val_loss_values[-1]} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
+                    print(f"Fold {fold+1}/{self.n_splits} | Val Loss: {exp.val_loss_values[-1]} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
 
+            # Compute average metrics for this experiment
             experiment_results[exp.name] = {
-                "train_loss": np.mean(cross_train_loss),
                 "val_loss": np.mean(cross_val_loss),
                 "val_accuracy": np.mean(cross_val_accuracy),
                 "val_precision": np.mean(cross_val_precision)
@@ -561,7 +568,6 @@ class CrossValidation():
 
             if self.verbose:
                 print(f"Cross Validation Results for {exp.name}:")
-                print(f"Train Loss: {experiment_results[exp.name]['train_loss']}")
                 print(f"Val Loss: {experiment_results[exp.name]['val_loss']}")
                 print(f"Val Accuracy: {experiment_results[exp.name]['val_accuracy']}")
                 print(f"Val Precision: {experiment_results[exp.name]['val_precision']}")
