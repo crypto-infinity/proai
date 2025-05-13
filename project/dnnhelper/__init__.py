@@ -333,18 +333,16 @@ class Experiment:
 
 class Trainer:
     """
-    Class to manage the training of a deep neural network.
-    This class handles the initialization of the model, loss function, optimizer, and early stopping mechanism.
-    It also provides methods for training and validating the model, as well as saving checkpoints.
+    Manages training and evaluation of a deep neural network.
     """
 
     @staticmethod
-    def fit(exp:Experiment, trainloader, valloader):
+    def fit(exp:Experiment, train_dl, val_dl, verbose=True):
         """
         Train the model for a specified number of epochs, computing exp.metrics.
         """
 
-        print(f"Training {exp.name}. Epochs: {exp.epochs} | Learning Rate: {exp.lr} | Batch Size: {trainloader.batch_size}")
+        print(f"Training {exp.name}. Epochs: {exp.epochs} | Learning Rate: {exp.lr} | Batch Size: {train_dl.batch_size}")
 
         # Reset Loss values before training
         exp.train_loss_values = []
@@ -365,7 +363,7 @@ class Trainer:
             exp.model.train()
             loss_epoch = 0
 
-            for _, data in enumerate(trainloader, 0):
+            for _, data in enumerate(train_dl, 0):
 
                 X = data[0].to(exp.device)
                 y = data[1].to(exp.device)
@@ -387,7 +385,7 @@ class Trainer:
             loss_val = 0
             exp.model.eval()
 
-            for _, data in enumerate(valloader, 0):
+            for _, data in enumerate(val_dl, 0):
 
                 X = data[0].to(exp.device)
                 y = data[1].to(exp.device)
@@ -405,8 +403,8 @@ class Trainer:
                         exp.val_metrics_objects[metric].update(y_pred, y)
 
             # Store loss values
-            exp.train_loss_values.append(loss_epoch/len(trainloader))
-            exp.val_loss_values.append(loss_val/len(valloader))
+            exp.train_loss_values.append(loss_epoch/len(train_dl))
+            exp.val_loss_values.append(loss_val/len(val_dl))
             exp.epoch_count.append(epoch)
 
             # Store metrics values
@@ -414,10 +412,11 @@ class Trainer:
             exp.val_precision_values.append(exp.val_metrics_objects["precision"].compute())
 
             # Print metrics
-            print(f"Epoca: {epoch} |  Train Loss: {loss_epoch/len(trainloader)} | Val Loss: {loss_val/len(valloader)} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
+            if verbose:
+                print(f"Epoca: {epoch} |  Train Loss: {loss_epoch/len(train_dl)} | Val Loss: {loss_val/len(val_dl)} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
 
             if exp.use_early_stopping:
-                exp.early_stopping(loss_val/len(valloader), exp.model)
+                exp.early_stopping(loss_val/len(val_dl), exp.model)
                 if exp.early_stopping.early_stop:
                     print("Early stopping all'epoca:", epoch)
                     exp.model.load_state_dict(torch.load(exp.checkpoint_save_path))
@@ -474,8 +473,7 @@ class Trainer:
         return loss_test/len(testloader), accuracy, precision
 
 
-## Modify this with subsetsampler
-@dataclass    
+## Modify this with subsetsampler  
 class CrossValidation():
     """
     Manages cross-validation for training and evaluating a model.
@@ -484,12 +482,13 @@ class CrossValidation():
     def __init__(
                 self, 
                 experiments: list[Experiment], 
-                X: torch.tensor, 
-                y: torch.tensor, 
-                test_dl: data_utils.DataLoader, 
-                n_splits, 
+                train_ds: data_utils.Dataset,
+                val_ds: data_utils.Dataset, 
+                n_splits,
+                batch_size=128, 
                 shuffle=True, 
-                seed=None
+                seed=None,
+                verbose=True
             ):
         """
         Initialize the cross-validation object.
@@ -499,38 +498,78 @@ class CrossValidation():
             shuffle: Whether to shuffle the data before splitting.
             random_state: Random seed for reproducibility.
         """
-        
-        self.dataset = data_utils.TensorDataset(X, y)
-        self.test_dl = test_dl
 
+        # Instance variables
         self.experiments = experiments
+        self.train_ds = train_ds
+        self.val_ds = val_ds
 
+        # Set hyperparamter
+        self.batch_size = batch_size
         self.n_splits = n_splits
         self.shuffle = shuffle
         self.seed = seed
+        self.verbose = verbose
 
-    def split_and_train(self):
+    def run(self):
         """
-        Splits the dataset into training and validation sets and trains the model.
+        Cross Validate the model using K-Fold cross-validation.
+        Handles fold splitting, training, and evaluation.
         """
-
-        # Kfold cross-validation
         
         kf = KFold(n_splits=self.n_splits, shuffle=self.shuffle, random_state=self.seed)
 
-        for fold, (train_idx, val_idx) in enumerate(kf.split(self.X)):
+        experiment_results = {}
 
-            train_sampler = data_utils.SubsetRandomSampler(train_idx)
-            val_sampler = data_utils.SubsetRandomSampler(val_idx)
+        for exp in self.experiments:
 
-            # Creating DataLoaders for this fold
-            train_dl_split = data_utils.DataLoader(self.dataset, batch_size=64, shuffle=True, sampler=train_sampler)
-            val_dl_split = data_utils.DataLoader(self.dataset, batch_size=64, shuffle=False, sampler=val_sampler)
-            
-            for exp in self.experiments:
+            print(f"Cross Validation for {exp.name} with {self.n_splits} folds")
+
+            # Initialize metrics lists
+            cross_train_loss = []
+            cross_val_loss = []
+            cross_val_accuracy = []
+            cross_val_precision = []
+
+            for fold, (train_idx, val_idx) in enumerate(kf.split(self.train_ds)):
+
+                train_sampler = data_utils.SubsetRandomSampler(train_idx)
+                val_sampler = data_utils.SubsetRandomSampler(val_idx)
+
+                # Creating DataLoaders for this fold
+                train_dl_split = data_utils.DataLoader(self.train_ds, batch_size=self.batch_size, shuffle=True, sampler=train_sampler)
+                val_dl_split = data_utils.DataLoader(self.val_ds, batch_size=self.batch_size, shuffle=False, sampler=val_sampler)
+
                 # Training models for this fold
                 Trainer.fit(exp, train_dl_split, val_dl_split)
 
-                # Evaluate the fold on the test set
-                test_loss = Trainer.evaluate(exp, self.test_dl)
-                print(f"Test Loss for {exp.name} on fold {fold}: {test_loss}")
+                # Update metrics
+                cross_train_loss.append(exp.train_loss_values)
+                cross_val_loss.append(exp.val_loss_values)
+                cross_val_accuracy.append(exp.val_accuracy_values)
+                cross_val_precision.append(exp.val_precision_values)
+
+                if self.verbose:
+                    print(f"Fold {fold+1}/{self.n_splits} | Train Loss: {exp.train_loss_values[-1]} | Val Loss: {exp.val_loss_values[-1]} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
+
+            experiment_results[exp.name] = {
+                "train_loss": np.mean(cross_train_loss),
+                "val_loss": np.mean(cross_val_loss),
+                "val_accuracy": np.mean(cross_val_accuracy),
+                "val_precision": np.mean(cross_val_precision)
+            }
+
+            if self.verbose:
+                print(f"Cross Validation Results for {exp.name}:")
+                print(f"Train Loss: {experiment_results[exp.name]['train_loss']}")
+                print(f"Val Loss: {experiment_results[exp.name]['val_loss']}")
+                print(f"Val Accuracy: {experiment_results[exp.name]['val_accuracy']}")
+                print(f"Val Precision: {experiment_results[exp.name]['val_precision']}")
+
+        return experiment_results
+
+        
+
+            
+            
+                
