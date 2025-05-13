@@ -17,12 +17,15 @@ import pandas as pd
 #PyTorch Libraries
 import torch
 import torch.utils.data as data_utils
+from torchmetrics.classification import MulticlassAccuracy, MulticlassF1Score, MulticlassPrecision, MulticlassRecall
 
 #Scikit-learn Library
 from sklearn.model_selection import KFold
 
 #Dataclass Library
 from dataclasses import dataclass, field
+
+N_CLASSES = 14
 
 class Helper:
     """
@@ -225,12 +228,18 @@ class Experiment:
     checkpoints_folder: str
     checkpoint_name:str
     model: object
+    metrics: list #accuracy, precision, recall, f1
 
     #Model hyperparameters
     loss_fn : object
     optimizer: object
     val_mse: float = None
     lr: float = 1e-5
+
+    #Loss values
+    train_loss_values: list = field(default_factory=list)
+    val_loss_values: list = field(default_factory=list)
+    epoch_count: list = field(default_factory=list)
     
     # Early stopping
     use_early_stopping: bool = False
@@ -239,6 +248,13 @@ class Experiment:
     
     #Epochs
     epochs: int = 600
+
+    #Metrics values
+    train_metrics_objects: dict = field(default_factory=dict)
+    val_metrics_objects: dict = field(default_factory=dict)
+
+    val_accuracy_values: list = field(default_factory=list)
+    val_precision_values: list = field(default_factory=list)
     
     #Plotting arguments
     color: str = "blue"
@@ -273,6 +289,35 @@ class Experiment:
             self.early_stopping = EarlyStopping(save_path=early_stopping_folder+self.name,
                                                 patience=self.patience,
                                                 min_delta=self.min_delta)
+            
+        # Initialize metrics
+        if "accuracy" in self.metrics:
+            
+            self.accuracy_train = MulticlassAccuracy(num_classes=N_CLASSES).to(self.device)
+            self.accuracy_val = MulticlassAccuracy(num_classes=N_CLASSES).to(self.device)
+            self.train_metrics_objects["accuracy"] = self.accuracy_train
+            self.val_metrics_objects["accuracy"] = self.accuracy_val
+
+        if "precision" in self.metrics:
+
+            self.precision_train = MulticlassPrecision(num_classes=N_CLASSES).to(self.device)
+            self.precision_val = MulticlassPrecision(num_classes=N_CLASSES).to(self.device)
+            self.train_metrics_objects["precision"] = self.precision_train
+            self.val_metrics_objects["precision"] = self.precision_val
+
+        if "recall" in self.metrics:
+
+            self.recall_train = MulticlassRecall(num_classes=N_CLASSES).to(self.device)
+            self.recall_val = MulticlassRecall(num_classes=N_CLASSES).to(self.device)
+            self.train_metrics_objects["recall"] = self.recall_train
+            self.val_metrics_objects["recall"] = self.recall_val
+
+        if "f1" in self.metrics:
+
+            self.f1_train = MulticlassF1Score(num_classes=N_CLASSES).to(self.device)
+            self.f1_val = MulticlassF1Score(num_classes=N_CLASSES).to(self.device)
+            self.train_metrics_objects["f1"] = self.f1_train
+            self.val_metrics_objects["f1"] = self.f1_val
         
         # Checkpointing setup
         self.checkpoints_folder = os.path.join(self.checkpoints_folder, "checkpoints", self.name)
@@ -301,9 +346,13 @@ class Trainer:
 
         print(f"Training {exp.name}. Epochs: {exp.epochs} | Learning Rate: {exp.lr} | Batch Size: {trainloader.batch_size}")
 
-        # Reset Loss values
+        # Reset Loss values before training
         exp.train_loss_values = []
         exp.val_loss_values = []
+
+        # Reset Metrics values 
+        exp.val_accuracy_values = []
+        exp.val_precision_values = []
 
         for epoch in range(exp.epochs):
 
@@ -318,7 +367,9 @@ class Trainer:
                 y_pred = exp.model(X)
                 loss = exp.loss_fn(y_pred, y)
 
-                # Add Accuracy and Precision computation here
+                # Compute metrics
+                for i, metric in enumerate(exp.train_metrics_objects):
+                    exp.train_metrics_objects[metric].update(y_pred, y)
 
                 loss_epoch += loss.item()
 
@@ -343,12 +394,27 @@ class Trainer:
                     loss = exp.loss_fn(y_pred, y)
                     loss_val += loss.item()
 
-                    # Add Accuracy and Precision computation here
+                    # Compute metrics
+                    for i, metric in enumerate(exp.val_metrics_objects):
+                        exp.val_metrics_objects[metric].update(y_pred, y)
 
+            # Store loss values
             exp.train_loss_values.append(loss_epoch/len(trainloader))
             exp.val_loss_values.append(loss_val/len(valloader))
+            exp.epoch_count.append(epoch)
 
-            print(f"Epoca: {epoch} |  Train Loss: {loss_epoch/len(trainloader)} | Val Loss: {loss_val/len(valloader)}")
+            # Store metrics values
+            exp.val_accuracy_values.append(exp.val_metrics_objects["accuracy"].compute())
+            exp.val_precision_values.append(exp.val_metrics_objects["precision"].compute())
+
+            # Print metrics
+            print(f"Epoca: {epoch} |  Train Loss: {loss_epoch/len(trainloader)} | Val Loss: {loss_val/len(valloader)} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
+
+            # Reset metrics for the next epoch
+            for i, metric in enumerate(exp.val_metrics_objects):
+                exp.val_metrics_objects[metric].reset()
+            for i, metric in enumerate(exp.val_metrics_objects):
+                exp.val_metrics_objects[metric].reset()
 
             if exp.use_early_stopping:
                 exp.early_stopping(loss_val/len(valloader), exp.model)
@@ -385,7 +451,13 @@ class Trainer:
                 loss = exp.loss_fn(y_pred, y)
                 loss_test += loss
 
-        return loss_test.item()/len(testloader)
+                # Compute metrics
+                for metric in exp.val_metrics_objects:
+                    metric.update(y_pred, y)
+
+            
+
+        return loss_test.item()/len(testloader), exp.val_metrics_objects[0].compute(), exp.val_metrics_objects[1].compute()
 
 
 ## Modify this with subsetsampler
@@ -395,7 +467,16 @@ class CrossValidation():
     Manages cross-validation for training and evaluating a model.
     """
     
-    def __init__(self, experiments: list[Experiment], X: torch.tensor, y: torch.tensor, test_dl: data_utils.DataLoader, n_splits, shuffle=True, seed=None):
+    def __init__(
+                self, 
+                experiments: list[Experiment], 
+                X: torch.tensor, 
+                y: torch.tensor, 
+                test_dl: data_utils.DataLoader, 
+                n_splits, 
+                shuffle=True, 
+                seed=None
+            ):
         """
         Initialize the cross-validation object.
         
