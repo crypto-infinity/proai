@@ -341,7 +341,7 @@ class Trainer:
     @staticmethod
     def fit(exp:Experiment, trainloader, valloader):
         """
-        Train the model for a specified number of epochs.
+        Train the model for a specified number of epochs, computing exp.metrics.
         """
 
         print(f"Training {exp.name}. Epochs: {exp.epochs} | Learning Rate: {exp.lr} | Batch Size: {trainloader.batch_size}")
@@ -353,6 +353,12 @@ class Trainer:
         # Reset Metrics values 
         exp.val_accuracy_values = []
         exp.val_precision_values = []
+
+        # Reset metrics for the next epoch
+        for i, metric in enumerate(exp.train_metrics_objects):
+            exp.train_metrics_objects[metric].reset()
+        for i, metric in enumerate(exp.val_metrics_objects):
+            exp.val_metrics_objects[metric].reset()
 
         for epoch in range(exp.epochs):
 
@@ -410,12 +416,6 @@ class Trainer:
             # Print metrics
             print(f"Epoca: {epoch} |  Train Loss: {loss_epoch/len(trainloader)} | Val Loss: {loss_val/len(valloader)} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
 
-            # Reset metrics for the next epoch
-            for i, metric in enumerate(exp.val_metrics_objects):
-                exp.val_metrics_objects[metric].reset()
-            for i, metric in enumerate(exp.val_metrics_objects):
-                exp.val_metrics_objects[metric].reset()
-
             if exp.use_early_stopping:
                 exp.early_stopping(loss_val/len(valloader), exp.model)
                 if exp.early_stopping.early_stop:
@@ -435,6 +435,14 @@ class Trainer:
         Args:
             exp: Experiment object containing the model and evaluation parameters.
             testloader: DataLoader for the test set.
+
+        Returns:
+            loss_test: float
+                The average loss on the test set.
+            accuracy: float
+                The accuracy of the model on the test set.
+            precision: float
+                The precision of the model on the test set.
         """
         
         exp.model.eval()
@@ -442,22 +450,28 @@ class Trainer:
 
         for _, data in enumerate(testloader, 0):
 
-            X = data[0]
-            y = data[1]
+            X = data[0].to(exp.device)
+            y = data[1].to(exp.device)
 
             with torch.no_grad():
 
                 y_pred = exp.model(X)
                 loss = exp.loss_fn(y_pred, y)
-                loss_test += loss
+                loss_test += loss.item()
 
                 # Compute metrics
-                for metric in exp.val_metrics_objects:
-                    metric.update(y_pred, y)
+                for i, metric in enumerate(exp.val_metrics_objects):
+                    exp.val_metrics_objects[metric].update(y_pred, y)
 
-            
+        # Store metrics values
+        accuracy = exp.val_metrics_objects["accuracy"].compute()
+        precision = exp.val_metrics_objects["precision"].compute()
 
-        return loss_test.item()/len(testloader), exp.val_metrics_objects[0].compute(), exp.val_metrics_objects[1].compute()
+        # Reset metrics
+        for i, metric in enumerate(exp.val_metrics_objects):
+            exp.val_metrics_objects[metric].reset()
+
+        return loss_test/len(testloader), accuracy, precision
 
 
 ## Modify this with subsetsampler
