@@ -137,6 +137,10 @@ class Experiment:
     loss_fn : object
     optimizer: object
     lr: float = 1e-5
+    lr_scheduler: bool = False
+    lr_gamma: float = 0.1
+    lr_step: int = 5
+    momentum: float = 0.9
 
     #Loss values
     train_loss_values: list = field(default_factory=list)
@@ -167,7 +171,10 @@ class Experiment:
 
 
     def __post_init__(self):
-        
+        """
+        Initializes the Experiment class by setting up the model, loss function, optimizer, and early stopping parameters.
+        """
+
         # Set the device to GPU if available, otherwise CPU
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
@@ -177,7 +184,7 @@ class Experiment:
         self.loss_fn = self.loss_fn()
         self.loss_fn = self.loss_fn.to(self.device)
 
-        self.optimizer = self.optimizer(self.model.parameters(), lr=self.lr)
+        self.optimizer = self.optimizer(self.model.parameters(), lr=self.lr, momentum=self.momentum)
 
         # Initialize loss lists
         self.train_loss_values = []
@@ -196,29 +203,29 @@ class Experiment:
         # Initialize metrics
         if "accuracy" in self.metrics:
             
-            self.accuracy_train = MulticlassAccuracy(num_classes=N_CLASSES).to(self.device)
-            self.accuracy_val = MulticlassAccuracy(num_classes=N_CLASSES).to(self.device)
+            self.accuracy_train = MulticlassAccuracy(num_classes=self.n_classes).to(self.device)
+            self.accuracy_val = MulticlassAccuracy(num_classes=self.n_classes).to(self.device)
             self.train_metrics_objects["accuracy"] = self.accuracy_train
             self.val_metrics_objects["accuracy"] = self.accuracy_val
 
         if "precision" in self.metrics:
 
-            self.precision_train = MulticlassPrecision(num_classes=N_CLASSES).to(self.device)
-            self.precision_val = MulticlassPrecision(num_classes=N_CLASSES).to(self.device)
+            self.precision_train = MulticlassPrecision(num_classes=self.n_classes).to(self.device)
+            self.precision_val = MulticlassPrecision(num_classes=self.n_classes).to(self.device)
             self.train_metrics_objects["precision"] = self.precision_train
             self.val_metrics_objects["precision"] = self.precision_val
 
         if "recall" in self.metrics:
 
-            self.recall_train = MulticlassRecall(num_classes=N_CLASSES).to(self.device)
-            self.recall_val = MulticlassRecall(num_classes=N_CLASSES).to(self.device)
+            self.recall_train = MulticlassRecall(num_classes=self.n_classes).to(self.device)
+            self.recall_val = MulticlassRecall(num_classes=self.n_classes).to(self.device)
             self.train_metrics_objects["recall"] = self.recall_train
             self.val_metrics_objects["recall"] = self.recall_val
 
         if "f1" in self.metrics:
 
-            self.f1_train = MulticlassF1Score(num_classes=N_CLASSES).to(self.device)
-            self.f1_val = MulticlassF1Score(num_classes=N_CLASSES).to(self.device)
+            self.f1_train = MulticlassF1Score(num_classes=self.n_classes).to(self.device)
+            self.f1_val = MulticlassF1Score(num_classes=self.n_classes).to(self.device)
             self.train_metrics_objects["f1"] = self.f1_train
             self.val_metrics_objects["f1"] = self.f1_val
         
@@ -297,9 +304,12 @@ class Helper:
         plt.figure(figsize=(10, 5))
         plt.plot(exp.epoch_count, exp.train_loss_values, label='Training Loss', color=exp.color, alpha=exp.alpha, **exp.plt_args_training)
         plt.plot(exp.epoch_count, exp.val_loss_values, label='Validation Loss', color=exp.color, alpha=exp.alpha, **exp.plt_args_validation)
+
         plt.xlabel('Epochs')
         plt.ylabel('Loss')
+
         plt.title(f'Loss over Epochs for {exp.name}')
+
         plt.legend()
         plt.show()
 
@@ -314,10 +324,12 @@ class Helper:
         plt.figure(figsize=(10, 8))
         sns.heatmap(cm, annot=True, fmt='.2f', cmap=cmap,
                     xticklabels=classes, yticklabels=classes)
+        
         plt.ylabel('True label')
         plt.xlabel('Predicted label')
         if title:
             plt.title(title)
+
         plt.show()
 
     @staticmethod
@@ -386,8 +398,11 @@ class Trainer:
             exp.early_stopping.min_val_loss = None
             exp.early_stopping.early_stop = False
 
+        if exp.lr_scheduler:
+            lr_scheduler = torch.optim.lr_scheduler.StepLR(exp.optimizer, step_size=exp.lr_step, gamma=exp.lr_gamma)
+
         if verbose:
-            print(f"Training {exp.name}. Epochs: {exp.epochs} | Learning Rate: {exp.lr} | Batch Size: {train_dl.batch_size}")
+            print(f"Training {exp.name}. Epochs: {exp.epochs} | Learning Rate: {exp.lr} | Batch Size: {train_dl.batch_size} | Momentum: {exp.momentum} | Loss Function: {exp.loss_fn.__class__.__name__} | Optimizer: {exp.optimizer.__class__.__name__}")
 
         # Reset Loss values before training
         exp.train_loss_values = []
@@ -425,7 +440,7 @@ class Trainer:
                 # Backpropagation
                 exp.optimizer.zero_grad()
                 loss.backward()
-                exp.optimizer.step()
+                exp.optimizer.step() #run before lr_scheduler.step()
 
             loss_val = 0
             exp.model.eval()
@@ -459,6 +474,10 @@ class Trainer:
             # Print metrics
             if verbose:
                 print(f"Epoca: {epoch} |  Train Loss: {exp.train_loss_values[-1]} | Val Loss: {exp.val_loss_values[-1]} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
+
+            # LR Step, if applicable
+            if exp.lr_scheduler:
+                lr_scheduler.step()
 
             if exp.use_early_stopping:
                 exp.early_stopping(loss_val/len(val_dl), exp.model)
@@ -516,6 +535,34 @@ class Trainer:
             exp.val_metrics_objects[metric].reset()
 
         return loss_test/len(testloader), accuracy, precision
+    
+    def predict(exp:Experiment, dataloader):
+        """
+        Predict the class labels for a given dataset.
+        
+        Args:
+            exp: Experiment object containing the model and evaluation parameters.
+            dataloader: DataLoader for the features to execute predict on.
+
+        Returns:
+            y_pred: list
+                The predicted class labels (as 1D array).
+        """
+        
+        exp.model.eval()
+        y_pred = []
+
+        for _, data in enumerate(dataloader, 0):
+
+            X = data[0].to(exp.device)
+
+            with torch.no_grad():
+
+                y_pred_batch = exp.model(X)
+                y_pred_batch = torch.argmax(y_pred_batch, dim=1).cpu().numpy() #can be softmax as well
+                y_pred.append(y_pred_batch)
+
+        return np.concatenate(y_pred).tolist() #converts to 1D scalar array
 
 
 ## Modify this with subsetsampler  
