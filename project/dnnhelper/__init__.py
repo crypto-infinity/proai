@@ -140,7 +140,6 @@ class Experiment:
     lr_scheduler: bool = False
     lr_gamma: float = 0.1
     lr_step: int = 5
-    momentum: float = 0.9
 
     #Loss values
     train_loss_values: list = field(default_factory=list)
@@ -184,7 +183,7 @@ class Experiment:
         self.loss_fn = self.loss_fn()
         self.loss_fn = self.loss_fn.to(self.device)
 
-        self.optimizer = self.optimizer(self.model.parameters(), lr=self.lr, momentum=self.momentum)
+        self.optimizer = self.optimizer(self.model.parameters(), lr=self.lr)
 
         # Initialize loss lists
         self.train_loss_values = []
@@ -402,7 +401,7 @@ class Trainer:
             lr_scheduler = torch.optim.lr_scheduler.StepLR(exp.optimizer, step_size=exp.lr_step, gamma=exp.lr_gamma)
 
         if verbose:
-            print(f"Training {exp.name}. Epochs: {exp.epochs} | Learning Rate: {exp.lr} | Batch Size: {train_dl.batch_size} | Momentum: {exp.momentum} | Loss Function: {exp.loss_fn.__class__.__name__} | Optimizer: {exp.optimizer.__class__.__name__}")
+            print(f"Training {exp.name}. Epochs: {exp.epochs} | Learning Rate: {exp.lr} | Batch Size: {train_dl.batch_size} | Loss Function: {exp.loss_fn.__class__.__name__} | Optimizer: {exp.optimizer.__class__.__name__}")
 
         # Reset Loss values before training
         exp.train_loss_values = []
@@ -412,13 +411,14 @@ class Trainer:
         exp.val_accuracy_values = []
         exp.val_precision_values = []
 
-        # Reset metrics for the next epoch
-        for i, metric in enumerate(exp.train_metrics_objects):
-            exp.train_metrics_objects[metric].reset()
-        for i, metric in enumerate(exp.val_metrics_objects):
-            exp.val_metrics_objects[metric].reset()
 
         for epoch in range(exp.epochs):
+
+            # Reset metrics for the next epoch
+            for i, metric in enumerate(exp.train_metrics_objects):
+                exp.train_metrics_objects[metric].reset()
+            for i, metric in enumerate(exp.val_metrics_objects):
+                exp.val_metrics_objects[metric].reset()
 
             exp.model.train()
             loss_epoch = 0
@@ -473,7 +473,7 @@ class Trainer:
 
             # Print metrics
             if verbose:
-                print(f"Epoca: {epoch} |  Train Loss: {exp.train_loss_values[-1]} | Val Loss: {exp.val_loss_values[-1]} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
+                print(f"Epoch: {epoch} |  Train Loss: {exp.train_loss_values[-1]} | Val Loss: {exp.val_loss_values[-1]} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
 
             # LR Step, if applicable
             if exp.lr_scheduler:
@@ -536,7 +536,7 @@ class Trainer:
 
         return loss_test/len(testloader), accuracy, precision
     
-    def predict(exp:Experiment, dataloader):
+    def predict(exp:Experiment, image):
         """
         Predict the class labels for a given dataset.
         
@@ -549,10 +549,12 @@ class Trainer:
                 The predicted class labels (as 1D array).
         """
         
+        loader = data_utils.DataLoader(image, batch_size=exp.batch_size, shuffle=False)
+
         exp.model.eval()
         y_pred = []
 
-        for _, data in enumerate(dataloader, 0):
+        for _, data in enumerate(loader, 0):
 
             X = data[0].to(exp.device)
 
@@ -624,6 +626,14 @@ class CrossValidation():
 
             for fold, (train_idx, val_idx) in enumerate(kf.split(self.train_ds)):
 
+                # Reset the model to initial state
+                for i, layer in enumerate(exp.model.children()):
+                    if hasattr(layer, 'reset_parameters') and i >= 173: # Skip the ResNet backbone
+                        layer.reset_parameters()
+
+                exp.optimizer = exp.optimizer.__class__(exp.model.parameters(), lr=exp.lr)
+
+                # Define samplers for the current fold
                 train_sampler = data_utils.SubsetRandomSampler(train_idx)
                 val_sampler = data_utils.SubsetRandomSampler(val_idx)
 
