@@ -264,6 +264,9 @@ class Helper:
         for i in range(num_row * num_col):
 
             idx = iteration * num_row * num_col + i
+            if idx >= len(dataset):
+                break 
+
             true_label = int(dataset[idx][1])
 
             # Avoids ValueErrorer if y_pred is None
@@ -454,6 +457,11 @@ class Trainer:
         Train the model for a specified number of epochs, computing exp.metrics.
         """
 
+        # Reset tracking lists
+        exp.epoch_count = []
+        exp.train_loss_values = []
+        exp.val_loss_values = []
+
         # Reset early stopping
         if exp.use_early_stopping:
             exp.early_stopping.counter = 0
@@ -536,7 +544,7 @@ class Trainer:
 
             # Print metrics
             if verbose:
-                print(f"Epoch: {epoch} |  Train Loss: {exp.train_loss_values[-1]} | Val Loss: {exp.val_loss_values[-1]} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
+                print(f"Epoch: {epoch} |  Train Loss: {exp.train_loss_values[-1]:.4f} | Val Loss: {exp.val_loss_values[-1]:.4f} | Val Accuracy: {exp.val_accuracy_values[-1]:.4f} | Val Precision: {exp.val_precision_values[-1]:.4f}")
 
             # LR Step, if applicable
             if exp.lr_scheduler:
