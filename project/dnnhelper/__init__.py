@@ -246,25 +246,66 @@ class Helper:
     """
 
     @staticmethod
-    def plot_images(dataset, classes, iteration=0, num_row=3, num_col=5):
-       """
-       Visualizes a batch of images from the dataset.
-       Args:
+    def plot_images(dataset, classes, iteration=0, num_row=3, num_col=5, validation=False, y_pred=None, show_only_wrong=False):
+        """
+        Displays a batch of images from the dataset, also showing the predicted label if provided.
+        Args:
             dataset: PyTorch dataset.
             classes: List of class names.
             iteration: Iteration number for batch visualization.
-       """
+            num_row: Number of rows.
+            num_col: Number of columns.
+            validation: If True, also shows the predicted label (default False).
+            y_pred: List of predicted labels (optional, required if validation=True).
+        """
 
-       fig, axes = plt.subplots(num_row, num_col, figsize=(10*num_row,2*num_col))
+        fig, axes = plt.subplots(num_row, num_col, figsize=(10*num_row, 2*num_col))
 
-       for i in range(num_row*num_col):
-           ax = axes[i//num_col, i%num_col]
-           ax.imshow(Helper.back_to_image(dataset[iteration * num_row * num_col + i][0]))
-           ax.set_title('{}'.format(classes[int(dataset[iteration * num_row * num_col + i][1])]))
+        for i in range(num_row * num_col):
 
-       plt.tight_layout()
-       plt.show()
-       iteration += 1
+            idx = iteration * num_row * num_col + i
+            true_label = int(dataset[idx][1])
+
+            # Avoids ValueErrorer if y_pred is None
+            if validation:
+                if y_pred is None:
+                    raise ValueError("y_pred must be provided for validation.")
+                
+                pred_label = int(y_pred[idx])
+            
+            # Skip in case of correct prediction if show_only_wrong is True
+            if show_only_wrong:
+                if pred_label == true_label:
+                    continue
+
+            # Get the current axis
+            ax = axes[i // num_col, i % num_col]
+
+            # Get image and true label
+            image = Helper.back_to_image(dataset[idx][0])
+
+            # Display the image
+            ax.imshow(image)
+
+            # Set the title to show the true label
+            title = f'True: {classes[true_label]}'
+            ax.axis('off')
+
+            # If validation is True, show the predicted label
+            if validation:
+                if pred_label != true_label:
+                    title += f' | Pred: {classes[pred_label]}'
+                    ax.set_title(title, color='red')
+                else:
+                    title += f' | Pred: {classes[pred_label]}'
+                    ax.set_title(title)
+                    
+            else:
+                ax.set_title(title)
+
+        plt.tight_layout()
+        plt.show()
+        iteration += 1
 
     @staticmethod
     def plot_class_distribution(dataset, type="training"):
@@ -286,6 +327,8 @@ class Helper:
         #Plotting
         df['label'].value_counts().plot(kind='bar', figsize=(12, 6))
         plt.title(f'Distribuzione delle classi nel {type} set')
+
+
         plt.xlabel('Classi')
         plt.ylabel('Numero di samples')
         plt.xticks(rotation=45)
@@ -300,6 +343,15 @@ class Helper:
             exp: Experiment object containing the training history.
         """
 
+        # Check if the experiment has loss values
+        if not exp.train_loss_values or not exp.val_loss_values:
+            raise ValueError("Loss values are not available. Please train the model first.")
+        
+        # Check if the experiment has epoch count
+        if not exp.epoch_count:
+            raise ValueError("Epoch count is not available. Please train the model first.")
+        
+        # Plotting
         plt.figure(figsize=(10, 5))
         plt.plot(exp.epoch_count, exp.train_loss_values, label='Training Loss', color=exp.color, alpha=exp.alpha, **exp.plt_args_training)
         plt.plot(exp.epoch_count, exp.val_loss_values, label='Validation Loss', color=exp.color, alpha=exp.alpha, **exp.plt_args_validation)
@@ -317,9 +369,20 @@ class Helper:
         """
         Plot the confusion matrix.
         """
+
+        # Check if y_true and y_pred are of the same length
+        if len(y_true) != len(y_pred):
+            raise ValueError("y_true and y_pred must have the same length.")
+        
+        # Check if classes is a list
+        if not isinstance(classes, list):
+            raise ValueError("classes must be a list of class names.")
+        
+        # Compute confusion matrix
         cm = confusion_matrix(y_true, y_pred)
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
 
+        # Plotting
         plt.figure(figsize=(10, 8))
         sns.heatmap(cm, annot=True, fmt='.2f', cmap=cmap,
                     xticklabels=classes, yticklabels=classes)
@@ -536,7 +599,7 @@ class Trainer:
 
         return loss_test/len(testloader), accuracy, precision
     
-    def predict(exp:Experiment, image):
+    def predict(exp:Experiment, testloader):
         """
         Predict the class labels for a given dataset.
         
@@ -548,13 +611,11 @@ class Trainer:
             y_pred: list
                 The predicted class labels (as 1D array).
         """
-        
-        loader = data_utils.DataLoader(image, batch_size=exp.batch_size, shuffle=False)
 
         exp.model.eval()
         y_pred = []
 
-        for _, data in enumerate(loader, 0):
+        for _, data in enumerate(testloader, 0):
 
             X = data[0].to(exp.device)
 
@@ -567,7 +628,6 @@ class Trainer:
         return np.concatenate(y_pred).tolist() #converts to 1D scalar array
 
 
-## Modify this with subsetsampler  
 class CrossValidation():
     """
     Manages cross-validation for training and evaluating a model.
