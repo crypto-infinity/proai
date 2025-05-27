@@ -1,0 +1,8 @@
+torchvision
+pytorch-lightning
+albumentations
+numpy
+torchsummary
+torchmetrics
+torch
+scikit-learn
