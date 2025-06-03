@@ -161,6 +161,8 @@ class Experiment:
     #Metrics values
     val_accuracy_values: list = field(default_factory=list)
     val_precision_values: list = field(default_factory=list)
+    val_f1_values: list = field(default_factory=list)
+    val_recall_values: list = field(default_factory=list)
     
     #Plotting arguments
     color: str = "blue"
@@ -539,12 +541,21 @@ class Trainer:
             exp.epoch_count.append(epoch)
 
             # Store metrics values
-            exp.val_accuracy_values.append(exp.val_metrics_objects["accuracy"].compute())
-            exp.val_precision_values.append(exp.val_metrics_objects["precision"].compute())
+            if "accuracy" in exp.metrics:
+                exp.val_accuracy_values.append(exp.val_metrics_objects["accuracy"].compute())
+            
+            if "precision" in exp.metrics:
+                exp.val_precision_values.append(exp.val_metrics_objects["precision"].compute())
+
+            if "f1" in exp.metrics:
+                exp.val_f1_values.append(exp.val_metrics_objects["f1"].compute())
+
+            if "recall" in exp.metrics:
+                exp.val_recall_values.append(exp.val_metrics_objects["recall"].compute())
 
             # Print metrics
             if verbose:
-                print(f"Epoch: {epoch} |  Train Loss: {exp.train_loss_values[-1]:.4f} | Val Loss: {exp.val_loss_values[-1]:.4f} | Val Accuracy: {exp.val_accuracy_values[-1]:.4f} | Val Precision: {exp.val_precision_values[-1]:.4f}")
+                print(f"Epoch: {epoch} |  Train Loss: {exp.train_loss_values[-1]:.4f} | Val Loss: {exp.val_loss_values[-1]:.4f} | Val Accuracy: {exp.val_accuracy_values[-1]:.4f} | Val Precision: {exp.val_precision_values[-1]:.4f} | Val F1: {exp.val_f1_values[-1]:.4f}")
 
             # LR Step, if applicable
             if exp.lr_scheduler:
