@@ -1,0 +1,230 @@
+Cross Validation for baseline with 3 folds
+Training baseline. Epochs: 20 | Learning Rate: 0.0005 | Batch Size: 64 | Loss Function: CrossEntropyLoss | Optimizer: SGD
+Epoch: 0 |  Train Loss: 0.7000 | Val Loss: 0.6947 | Val Accuracy: 0.5267 | Val Precision: 0.5920 | Val F1: 0.3975
+Epoch: 1 |  Train Loss: 0.6933 | Val Loss: 0.6896 | Val Accuracy: 0.5742 | Val Precision: 0.5790 | Val F1: 0.5550
+Epoch: 2 |  Train Loss: 0.6889 | Val Loss: 0.6862 | Val Accuracy: 0.5768 | Val Precision: 0.5811 | Val F1: 0.5759
+Epoch: 3 |  Train Loss: 0.6823 | Val Loss: 0.6796 | Val Accuracy: 0.6018 | Val Precision: 0.6309 | Val F1: 0.5918
+Epoch: 4 |  Train Loss: 0.6778 | Val Loss: 0.6787 | Val Accuracy: 0.5760 | Val Precision: 0.6264 | Val F1: 0.5477
+Epoch: 5 |  Train Loss: 0.6739 | Val Loss: 0.6771 | Val Accuracy: 0.5966 | Val Precision: 0.6839 | Val F1: 0.5639
+Epoch: 6 |  Train Loss: 0.6698 | Val Loss: 0.6720 | Val Accuracy: 0.5561 | Val Precision: 0.6382 | Val F1: 0.5014
+Epoch: 7 |  Train Loss: 0.6686 | Val Loss: 0.6724 | Val Accuracy: 0.5640 | Val Precision: 0.6773 | Val F1: 0.5053
+Epoch: 8 |  Train Loss: 0.6663 | Val Loss: 0.6705 | Val Accuracy: 0.5496 | Val Precision: 0.6709 | Val F1: 0.4772
+Epoch: 9 |  Train Loss: 0.6616 | Val Loss: 0.6693 | Val Accuracy: 0.5219 | Val Precision: 0.6266 | Val F1: 0.4221
+Epoch: 10 |  Train Loss: 0.6596 | Val Loss: 0.6659 | Val Accuracy: 0.5362 | Val Precision: 0.7092 | Val F1: 0.4412
+Epoch: 11 |  Train Loss: 0.6582 | Val Loss: 0.6652 | Val Accuracy: 0.5277 | Val Precision: 0.7145 | Val F1: 0.4221
+Epoch: 12 |  Train Loss: 0.6585 | Val Loss: 0.6620 | Val Accuracy: 0.5256 | Val Precision: 0.6854 | Val F1: 0.4208
+Epoch: 13 |  Train Loss: 0.6540 | Val Loss: 0.6625 | Val Accuracy: 0.5383 | Val Precision: 0.7331 | Val F1: 0.4426
+Epoch: 14 |  Train Loss: 0.6551 | Val Loss: 0.6608 | Val Accuracy: 0.5245 | Val Precision: 0.7396 | Val F1: 0.4128
+Epoch: 15 |  Train Loss: 0.6525 | Val Loss: 0.6611 | Val Accuracy: 0.5245 | Val Precision: 0.7396 | Val F1: 0.4128
+Epoch: 16 |  Train Loss: 0.6461 | Val Loss: 0.6590 | Val Accuracy: 0.5197 | Val Precision: 0.6929 | Val F1: 0.4062
+Epoch: 17 |  Train Loss: 0.6443 | Val Loss: 0.6583 | Val Accuracy: 0.5245 | Val Precision: 0.7396 | Val F1: 0.4128
+Epoch: 18 |  Train Loss: 0.6453 | Val Loss: 0.6510 | Val Accuracy: 0.5245 | Val Precision: 0.7396 | Val F1: 0.4128
+Epoch: 19 |  Train Loss: 0.6480 | Val Loss: 0.6520 | Val Accuracy: 0.5218 | Val Precision: 0.7343 | Val F1: 0.4074
+Fold 1/3 | Val Loss: 0.6520110453878131 | Val Accuracy: 0.521826446056366 | Val Precision: 0.734337329864502
+Training baseline. Epochs: 20 | Learning Rate: 0.0005 | Batch Size: 64 | Loss Function: CrossEntropyLoss | Optimizer: SGD
+Epoch: 0 |  Train Loss: 0.6510 | Val Loss: 0.6423 | Val Accuracy: 0.5451 | Val Precision: 0.7819 | Val F1: 0.4687
+Epoch: 1 |  Train Loss: 0.6508 | Val Loss: 0.6413 | Val Accuracy: 0.5569 | Val Precision: 0.7905 | Val F1: 0.4901
+Epoch: 2 |  Train Loss: 0.6514 | Val Loss: 0.6357 | Val Accuracy: 0.5510 | Val Precision: 0.7865 | Val F1: 0.4795
+Epoch: 3 |  Train Loss: 0.6462 | Val Loss: 0.6378 | Val Accuracy: 0.5549 | Val Precision: 0.7684 | Val F1: 0.4887
+Epoch: 4 |  Train Loss: 0.6507 | Val Loss: 0.6310 | Val Accuracy: 0.5480 | Val Precision: 0.7843 | Val F1: 0.4741
+Epoch: 5 |  Train Loss: 0.6451 | Val Loss: 0.6345 | Val Accuracy: 0.5451 | Val Precision: 0.7819 | Val F1: 0.4687
+Epoch: 6 |  Train Loss: 0.6464 | Val Loss: 0.6332 | Val Accuracy: 0.5598 | Val Precision: 0.7924 | Val F1: 0.4954
+Epoch: 7 |  Train Loss: 0.6500 | Val Loss: 0.6344 | Val Accuracy: 0.5588 | Val Precision: 0.8148 | Val F1: 0.4916
+Epoch: 8 |  Train Loss: 0.6449 | Val Loss: 0.6306 | Val Accuracy: 0.5637 | Val Precision: 0.7763 | Val F1: 0.5042
+Epoch: 9 |  Train Loss: 0.6446 | Val Loss: 0.6301 | Val Accuracy: 0.5569 | Val Precision: 0.7905 | Val F1: 0.4901
+Epoch: 10 |  Train Loss: 0.6418 | Val Loss: 0.6325 | Val Accuracy: 0.5676 | Val Precision: 0.8172 | Val F1: 0.5073
+Epoch: 11 |  Train Loss: 0.6422 | Val Loss: 0.6284 | Val Accuracy: 0.5706 | Val Precision: 0.8180 | Val F1: 0.5124
+Epoch: 12 |  Train Loss: 0.6403 | Val Loss: 0.6293 | Val Accuracy: 0.5706 | Val Precision: 0.8180 | Val F1: 0.5124
+Epoch: 13 |  Train Loss: 0.6426 | Val Loss: 0.6264 | Val Accuracy: 0.5598 | Val Precision: 0.7924 | Val F1: 0.4954
+Epoch: 14 |  Train Loss: 0.6393 | Val Loss: 0.6255 | Val Accuracy: 0.5735 | Val Precision: 0.8188 | Val F1: 0.5175
+Epoch: 15 |  Train Loss: 0.6336 | Val Loss: 0.6180 | Val Accuracy: 0.5833 | Val Precision: 0.8049 | Val F1: 0.5358
+Epoch: 16 |  Train Loss: 0.6375 | Val Loss: 0.6261 | Val Accuracy: 0.5686 | Val Precision: 0.7975 | Val F1: 0.5109
+Epoch: 17 |  Train Loss: 0.6341 | Val Loss: 0.6239 | Val Accuracy: 0.5686 | Val Precision: 0.7975 | Val F1: 0.5109
+Epoch: 18 |  Train Loss: 0.6371 | Val Loss: 0.6255 | Val Accuracy: 0.6069 | Val Precision: 0.8150 | Val F1: 0.5735
+Epoch: 19 |  Train Loss: 0.6353 | Val Loss: 0.6230 | Val Accuracy: 0.5824 | Val Precision: 0.8212 | Val F1: 0.5325
+Fold 2/3 | Val Loss: 0.6230280569621495 | Val Accuracy: 0.5823529362678528 | Val Precision: 0.8211586475372314
+Training baseline. Epochs: 20 | Learning Rate: 0.0005 | Batch Size: 64 | Loss Function: CrossEntropyLoss | Optimizer: SGD
+Epoch: 0 |  Train Loss: 0.6281 | Val Loss: 0.6273 | Val Accuracy: 0.5536 | Val Precision: 0.7873 | Val F1: 0.4834
+Epoch: 1 |  Train Loss: 0.6276 | Val Loss: 0.6228 | Val Accuracy: 0.5380 | Val Precision: 0.8083 | Val F1: 0.4520
+Epoch: 2 |  Train Loss: 0.6316 | Val Loss: 0.6226 | Val Accuracy: 0.5439 | Val Precision: 0.8098 | Val F1: 0.4632
+Epoch: 3 |  Train Loss: 0.6246 | Val Loss: 0.6235 | Val Accuracy: 0.5419 | Val Precision: 0.7780 | Val F1: 0.4618
+Epoch: 4 |  Train Loss: 0.6237 | Val Loss: 0.6186 | Val Accuracy: 0.5526 | Val Precision: 0.8120 | Val F1: 0.4795
+Epoch: 5 |  Train Loss: 0.6278 | Val Loss: 0.6189 | Val Accuracy: 0.5331 | Val Precision: 0.7686 | Val F1: 0.4451
+Epoch: 6 |  Train Loss: 0.6196 | Val Loss: 0.6209 | Val Accuracy: 0.5643 | Val Precision: 0.8151 | Val F1: 0.5006
+Epoch: 7 |  Train Loss: 0.6224 | Val Loss: 0.6157 | Val Accuracy: 0.5507 | Val Precision: 0.7853 | Val F1: 0.4781
+Epoch: 8 |  Train Loss: 0.6216 | Val Loss: 0.6180 | Val Accuracy: 0.5380 | Val Precision: 0.8083 | Val F1: 0.4520
+Epoch: 9 |  Train Loss: 0.6189 | Val Loss: 0.6148 | Val Accuracy: 0.5556 | Val Precision: 0.8128 | Val F1: 0.4848
+Epoch: 10 |  Train Loss: 0.6136 | Val Loss: 0.6161 | Val Accuracy: 0.5653 | Val Precision: 0.7946 | Val F1: 0.5042
+Epoch: 11 |  Train Loss: 0.6187 | Val Loss: 0.6160 | Val Accuracy: 0.5965 | Val Precision: 0.8240 | Val F1: 0.5550
+Epoch: 12 |  Train Loss: 0.6131 | Val Loss: 0.6148 | Val Accuracy: 0.5604 | Val Precision: 0.7725 | Val F1: 0.4976
+Epoch: 13 |  Train Loss: 0.6168 | Val Loss: 0.6144 | Val Accuracy: 0.5643 | Val Precision: 0.8151 | Val F1: 0.5006
+Epoch: 14 |  Train Loss: 0.6161 | Val Loss: 0.6130 | Val Accuracy: 0.5770 | Val Precision: 0.8008 | Val F1: 0.5243
+Epoch: 15 |  Train Loss: 0.6112 | Val Loss: 0.6099 | Val Accuracy: 0.5789 | Val Precision: 0.8191 | Val F1: 0.5259
+Epoch: 16 |  Train Loss: 0.6119 | Val Loss: 0.6119 | Val Accuracy: 0.5673 | Val Precision: 0.8159 | Val F1: 0.5058
+Epoch: 17 |  Train Loss: 0.6160 | Val Loss: 0.6134 | Val Accuracy: 0.5556 | Val Precision: 0.8128 | Val F1: 0.4848
+Epoch: 18 |  Train Loss: 0.6102 | Val Loss: 0.6076 | Val Accuracy: 0.5926 | Val Precision: 0.7945 | Val F1: 0.5515
+Epoch: 19 |  Train Loss: 0.6114 | Val Loss: 0.6100 | Val Accuracy: 0.5858 | Val Precision: 0.8049 | Val F1: 0.5389
+Fold 3/3 | Val Loss: 0.6100450924464634 | Val Accuracy: 0.5857508182525635 | Val Precision: 0.804936945438385
+Cross Validation Results for baseline:
+Val Loss: 0.6287637211027599
+Val Accuracy: 0.5607084234555563
+Val Precision: 0.7800980806350708
+Cross Validation for regolarized with 3 folds
+Training regolarized. Epochs: 40 | Learning Rate: 0.0001 | Batch Size: 64 | Loss Function: CrossEntropyLoss | Optimizer: Adam
+Epoch: 0 |  Train Loss: 0.4578 | Val Loss: 0.3894 | Val Accuracy: 0.8684 | Val Precision: 0.8632 | Val F1: 0.8653
+Epoch: 1 |  Train Loss: 0.2404 | Val Loss: 0.2527 | Val Accuracy: 0.8957 | Val Precision: 0.9000 | Val F1: 0.8976
+Epoch: 2 |  Train Loss: 0.1715 | Val Loss: 0.2341 | Val Accuracy: 0.9127 | Val Precision: 0.9127 | Val F1: 0.9127
+Epoch: 3 |  Train Loss: 0.1419 | Val Loss: 0.2172 | Val Accuracy: 0.9281 | Val Precision: 0.9267 | Val F1: 0.9274
+Epoch: 4 |  Train Loss: 0.1289 | Val Loss: 0.2121 | Val Accuracy: 0.9304 | Val Precision: 0.9335 | Val F1: 0.9319
+Epoch: 5 |  Train Loss: 0.0968 | Val Loss: 0.1880 | Val Accuracy: 0.9354 | Val Precision: 0.9303 | Val F1: 0.9325
+Epoch: 6 |  Train Loss: 0.0828 | Val Loss: 0.1766 | Val Accuracy: 0.9298 | Val Precision: 0.9259 | Val F1: 0.9276
+Epoch: 7 |  Train Loss: 0.0817 | Val Loss: 0.2135 | Val Accuracy: 0.9313 | Val Precision: 0.9328 | Val F1: 0.9320
+Epoch: 8 |  Train Loss: 0.0690 | Val Loss: 0.2036 | Val Accuracy: 0.9224 | Val Precision: 0.9224 | Val F1: 0.9224
+Epoch: 9 |  Train Loss: 0.0462 | Val Loss: 0.2052 | Val Accuracy: 0.9219 | Val Precision: 0.9274 | Val F1: 0.9244
+Epoch: 10 |  Train Loss: 0.0500 | Val Loss: 0.1865 | Val Accuracy: 0.9368 | Val Precision: 0.9472 | Val F1: 0.9412
+Epoch: 11 |  Train Loss: 0.0431 | Val Loss: 0.1830 | Val Accuracy: 0.9381 | Val Precision: 0.9404 | Val F1: 0.9392
+Early stopping all'epoca: 11
+Fold 1/3 | Val Loss: 0.1830212590949876 | Val Accuracy: 0.9381389617919922 | Val Precision: 0.9404302835464478
+Training regolarized. Epochs: 40 | Learning Rate: 0.0001 | Batch Size: 64 | Loss Function: CrossEntropyLoss | Optimizer: Adam
+Epoch: 0 |  Train Loss: 0.1162 | Val Loss: 0.0522 | Val Accuracy: 0.9746 | Val Precision: 0.9825 | Val F1: 0.9780
+Epoch: 1 |  Train Loss: 0.0902 | Val Loss: 0.0416 | Val Accuracy: 0.9911 | Val Precision: 0.9896 | Val F1: 0.9903
+Epoch: 2 |  Train Loss: 0.0675 | Val Loss: 0.0325 | Val Accuracy: 0.9915 | Val Precision: 0.9940 | Val F1: 0.9927
+Epoch: 3 |  Train Loss: 0.0468 | Val Loss: 0.0352 | Val Accuracy: 0.9915 | Val Precision: 0.9940 | Val F1: 0.9927
+Epoch: 4 |  Train Loss: 0.0382 | Val Loss: 0.0371 | Val Accuracy: 0.9915 | Val Precision: 0.9940 | Val F1: 0.9927
+Epoch: 5 |  Train Loss: 0.0399 | Val Loss: 0.0264 | Val Accuracy: 0.9980 | Val Precision: 0.9972 | Val F1: 0.9976
+Epoch: 6 |  Train Loss: 0.0302 | Val Loss: 0.0338 | Val Accuracy: 0.9887 | Val Precision: 0.9921 | Val F1: 0.9903
+Epoch: 7 |  Train Loss: 0.0303 | Val Loss: 0.0356 | Val Accuracy: 0.9903 | Val Precision: 0.9903 | Val F1: 0.9903
+Epoch: 8 |  Train Loss: 0.0291 | Val Loss: 0.0568 | Val Accuracy: 0.9810 | Val Precision: 0.9762 | Val F1: 0.9783
+Epoch: 9 |  Train Loss: 0.0350 | Val Loss: 0.0520 | Val Accuracy: 0.9851 | Val Precision: 0.9815 | Val F1: 0.9831
+Epoch: 10 |  Train Loss: 0.0303 | Val Loss: 0.0495 | Val Accuracy: 0.9802 | Val Precision: 0.9863 | Val F1: 0.9830
+Early stopping all'epoca: 10
+Fold 2/3 | Val Loss: 0.04950206633657217 | Val Accuracy: 0.9802259802818298 | Val Precision: 0.9862744808197021
+Training regolarized. Epochs: 40 | Learning Rate: 0.0001 | Batch Size: 64 | Loss Function: CrossEntropyLoss | Optimizer: Adam
+Epoch: 0 |  Train Loss: 0.0623 | Val Loss: 0.0218 | Val Accuracy: 0.9895 | Val Precision: 0.9912 | Val F1: 0.9903
+Epoch: 1 |  Train Loss: 0.0284 | Val Loss: 0.0379 | Val Accuracy: 0.9838 | Val Precision: 0.9872 | Val F1: 0.9854
+Epoch: 2 |  Train Loss: 0.0375 | Val Loss: 0.0306 | Val Accuracy: 0.9830 | Val Precision: 0.9882 | Val F1: 0.9854
+Epoch: 3 |  Train Loss: 0.0246 | Val Loss: 0.0294 | Val Accuracy: 0.9895 | Val Precision: 0.9912 | Val F1: 0.9903
+Epoch: 4 |  Train Loss: 0.0164 | Val Loss: 0.0501 | Val Accuracy: 0.9696 | Val Precision: 0.9776 | Val F1: 0.9731
+Epoch: 5 |  Train Loss: 0.0179 | Val Loss: 0.0264 | Val Accuracy: 0.9886 | Val Precision: 0.9921 | Val F1: 0.9903
+Early stopping all'epoca: 5
+Fold 3/3 | Val Loss: 0.02635725760566337 | Val Accuracy: 0.9886363744735718 | Val Precision: 0.992094874382019
+Cross Validation Results for regolarized:
+Val Loss: 0.08168694399119843
+Val Accuracy: 0.9714658856391907
+Val Precision: 0.9760783314704895
+Cross Validation for autolr_regolarized with 3 folds
+Training autolr_regolarized. Epochs: 40 | Learning Rate: 0.0001 | Batch Size: 64 | Loss Function: CrossEntropyLoss | Optimizer: Adam
+Epoch: 0 |  Train Loss: 0.0307 | Val Loss: 0.0475 | Val Accuracy: 0.9786 | Val Precision: 0.9831 | Val F1: 0.9807
+Epoch: 1 |  Train Loss: 0.0354 | Val Loss: 0.0503 | Val Accuracy: 0.9786 | Val Precision: 0.9831 | Val F1: 0.9807
+Epoch: 2 |  Train Loss: 0.0191 | Val Loss: 0.0329 | Val Accuracy: 0.9917 | Val Precision: 0.9939 | Val F1: 0.9928
+Epoch: 3 |  Train Loss: 0.0224 | Val Loss: 0.0885 | Val Accuracy: 0.9807 | Val Precision: 0.9861 | Val F1: 0.9831
+Epoch: 4 |  Train Loss: 0.0159 | Val Loss: 0.0425 | Val Accuracy: 0.9766 | Val Precision: 0.9803 | Val F1: 0.9783
+Epoch: 5 |  Train Loss: 0.0102 | Val Loss: 0.0400 | Val Accuracy: 0.9869 | Val Precision: 0.9891 | Val F1: 0.9879
+Epoch: 6 |  Train Loss: 0.0137 | Val Loss: 0.0236 | Val Accuracy: 0.9945 | Val Precision: 0.9959 | Val F1: 0.9952
+Epoch: 7 |  Train Loss: 0.0109 | Val Loss: 0.0331 | Val Accuracy: 0.9897 | Val Precision: 0.9911 | Val F1: 0.9904
+Epoch: 8 |  Train Loss: 0.0176 | Val Loss: 0.0308 | Val Accuracy: 0.9904 | Val Precision: 0.9904 | Val F1: 0.9904
+Epoch: 9 |  Train Loss: 0.0152 | Val Loss: 0.0357 | Val Accuracy: 0.9890 | Val Precision: 0.9919 | Val F1: 0.9903
+Epoch: 10 |  Train Loss: 0.0106 | Val Loss: 0.0507 | Val Accuracy: 0.9841 | Val Precision: 0.9871 | Val F1: 0.9855
+Epoch: 11 |  Train Loss: 0.0184 | Val Loss: 0.0404 | Val Accuracy: 0.9849 | Val Precision: 0.9863 | Val F1: 0.9855
+Epoch: 12 |  Train Loss: 0.0110 | Val Loss: 0.0407 | Val Accuracy: 0.9890 | Val Precision: 0.9919 | Val F1: 0.9903
+Epoch: 13 |  Train Loss: 0.0196 | Val Loss: 0.0398 | Val Accuracy: 0.9890 | Val Precision: 0.9919 | Val F1: 0.9903
+Early stopping all'epoca: 13
+Fold 1/3 | Val Loss: 0.03979050647467375 | Val Accuracy: 0.988950252532959 | Val Precision: 0.9919354915618896
+Training autolr_regolarized. Epochs: 40 | Learning Rate: 0.0001 | Batch Size: 64 | Loss Function: CrossEntropyLoss | Optimizer: Adam
+Epoch: 0 |  Train Loss: 0.0480 | Val Loss: 0.0093 | Val Accuracy: 0.9968 | Val Precision: 0.9981 | Val F1: 0.9975
+Epoch: 1 |  Train Loss: 0.0407 | Val Loss: 0.0125 | Val Accuracy: 0.9963 | Val Precision: 0.9937 | Val F1: 0.9949
+Epoch: 2 |  Train Loss: 0.0231 | Val Loss: 0.0108 | Val Accuracy: 0.9981 | Val Precision: 0.9968 | Val F1: 0.9975
+Epoch: 3 |  Train Loss: 0.0160 | Val Loss: 0.0091 | Val Accuracy: 1.0000 | Val Precision: 1.0000 | Val F1: 1.0000
+Epoch: 4 |  Train Loss: 0.0260 | Val Loss: 0.0135 | Val Accuracy: 0.9949 | Val Precision: 0.9949 | Val F1: 0.9949
+Epoch: 5 |  Train Loss: 0.0165 | Val Loss: 0.0114 | Val Accuracy: 0.9981 | Val Precision: 0.9968 | Val F1: 0.9975
+Epoch: 6 |  Train Loss: 0.0149 | Val Loss: 0.0163 | Val Accuracy: 0.9981 | Val Precision: 0.9968 | Val F1: 0.9975
+Epoch: 7 |  Train Loss: 0.0179 | Val Loss: 0.0130 | Val Accuracy: 0.9981 | Val Precision: 0.9968 | Val F1: 0.9975
+Epoch: 8 |  Train Loss: 0.0105 | Val Loss: 0.0105 | Val Accuracy: 0.9981 | Val Precision: 0.9968 | Val F1: 0.9975
+Epoch: 9 |  Train Loss: 0.0118 | Val Loss: 0.0103 | Val Accuracy: 0.9981 | Val Precision: 0.9968 | Val F1: 0.9975
+Epoch: 10 |  Train Loss: 0.0171 | Val Loss: 0.0160 | Val Accuracy: 0.9963 | Val Precision: 0.9937 | Val F1: 0.9949
+Early stopping all'epoca: 10
+Fold 2/3 | Val Loss: 0.01601479761302471 | Val Accuracy: 0.9962825179100037 | Val Precision: 0.9936708807945251
+Training autolr_regolarized. Epochs: 40 | Learning Rate: 0.0001 | Batch Size: 64 | Loss Function: CrossEntropyLoss | Optimizer: Adam
+Epoch: 0 |  Train Loss: 0.0310 | Val Loss: 0.0072 | Val Accuracy: 1.0000 | Val Precision: 1.0000 | Val F1: 1.0000
+Epoch: 1 |  Train Loss: 0.0155 | Val Loss: 0.0069 | Val Accuracy: 0.9974 | Val Precision: 0.9979 | Val F1: 0.9976
+Epoch: 2 |  Train Loss: 0.0128 | Val Loss: 0.0129 | Val Accuracy: 0.9974 | Val Precision: 0.9979 | Val F1: 0.9976
+Epoch: 3 |  Train Loss: 0.0170 | Val Loss: 0.0051 | Val Accuracy: 1.0000 | Val Precision: 1.0000 | Val F1: 1.0000
+Epoch: 4 |  Train Loss: 0.0121 | Val Loss: 0.0053 | Val Accuracy: 1.0000 | Val Precision: 1.0000 | Val F1: 1.0000
+Epoch: 5 |  Train Loss: 0.0074 | Val Loss: 0.0035 | Val Accuracy: 1.0000 | Val Precision: 1.0000 | Val F1: 1.0000
+Epoch: 6 |  Train Loss: 0.0188 | Val Loss: 0.0054 | Val Accuracy: 1.0000 | Val Precision: 1.0000 | Val F1: 1.0000
+Epoch: 7 |  Train Loss: 0.0038 | Val Loss: 0.0056 | Val Accuracy: 0.9974 | Val Precision: 0.9979 | Val F1: 0.9976
+Epoch: 8 |  Train Loss: 0.0565 | Val Loss: 0.0088 | Val Accuracy: 0.9974 | Val Precision: 0.9979 | Val F1: 0.9976
+Epoch: 9 |  Train Loss: 0.0165 | Val Loss: 0.0099 | Val Accuracy: 0.9974 | Val Precision: 0.9979 | Val F1: 0.9976
+Epoch: 10 |  Train Loss: 0.0191 | Val Loss: 0.0038 | Val Accuracy: 1.0000 | Val Precision: 1.0000 | Val F1: 1.0000
+Epoch: 11 |  Train Loss: 0.0114 | Val Loss: 0.0024 | Val Accuracy: 1.0000 | Val Precision: 1.0000 | Val F1: 1.0000
+Epoch: 12 |  Train Loss: 0.0127 | Val Loss: 0.0085 | Val Accuracy: 0.9974 | Val Precision: 0.9979 | Val F1: 0.9976
+Epoch: 13 |  Train Loss: 0.0150 | Val Loss: 0.0060 | Val Accuracy: 1.0000 | Val Precision: 1.0000 | Val F1: 1.0000
+Epoch: 14 |  Train Loss: 0.0074 | Val Loss: 0.0031 | Val Accuracy: 1.0000 | Val Precision: 1.0000 | Val F1: 1.0000
+Epoch: 15 |  Train Loss: 0.0079 | Val Loss: 0.0047 | Val Accuracy: 1.0000 | Val Precision: 1.0000 | Val F1: 1.0000
+Epoch: 16 |  Train Loss: 0.0271 | Val Loss: 0.0064 | Val Accuracy: 0.9979 | Val Precision: 0.9974 | Val F1: 0.9976
+Epoch: 17 |  Train Loss: 0.0133 | Val Loss: 0.0027 | Val Accuracy: 1.0000 | Val Precision: 1.0000 | Val F1: 1.0000
+Epoch: 18 |  Train Loss: 0.0066 | Val Loss: 0.0061 | Val Accuracy: 1.0000 | Val Precision: 1.0000 | Val F1: 1.0000
+Early stopping all'epoca: 18
+Fold 3/3 | Val Loss: 0.0061299607955983704 | Val Accuracy: 1.0 | Val Precision: 1.0
+Cross Validation Results for autolr_regolarized:
+Val Loss: 0.019922243076420963
+Val Accuracy: 0.9942756692568461
+Val Precision: 0.9943952957789103
+Cross Validation for autolr_reg_step3 with 3 folds
+Training autolr_reg_step3. Epochs: 30 | Learning Rate: 0.001 | Batch Size: 64 | Loss Function: CrossEntropyLoss | Optimizer: Adam
+Epoch: 0 |  Train Loss: 0.0686 | Val Loss: 0.9452 | Val Accuracy: 0.8438 | Val Precision: 0.8394 | Val F1: 0.8117
+Epoch: 1 |  Train Loss: 0.1384 | Val Loss: 0.1521 | Val Accuracy: 0.9499 | Val Precision: 0.9517 | Val F1: 0.9508
+Epoch: 2 |  Train Loss: 0.0750 | Val Loss: 0.3720 | Val Accuracy: 0.9256 | Val Precision: 0.9116 | Val F1: 0.9157
+Epoch: 3 |  Train Loss: 0.0404 | Val Loss: 0.2377 | Val Accuracy: 0.9459 | Val Precision: 0.9561 | Val F1: 0.9504
+Epoch: 4 |  Train Loss: 0.0619 | Val Loss: 0.1528 | Val Accuracy: 0.9399 | Val Precision: 0.9586 | Val F1: 0.9474
+Epoch: 5 |  Train Loss: 0.0368 | Val Loss: 0.1406 | Val Accuracy: 0.9468 | Val Precision: 0.9606 | Val F1: 0.9527
+Epoch: 6 |  Train Loss: 0.0230 | Val Loss: 0.1083 | Val Accuracy: 0.9479 | Val Precision: 0.9537 | Val F1: 0.9506
+Epoch: 7 |  Train Loss: 0.0147 | Val Loss: 0.1078 | Val Accuracy: 0.9528 | Val Precision: 0.9587 | Val F1: 0.9555
+Epoch: 8 |  Train Loss: 0.0219 | Val Loss: 0.0847 | Val Accuracy: 0.9735 | Val Precision: 0.9725 | Val F1: 0.9730
+Epoch: 9 |  Train Loss: 0.0263 | Val Loss: 0.1177 | Val Accuracy: 0.9616 | Val Precision: 0.9698 | Val F1: 0.9653
+Epoch: 10 |  Train Loss: 0.0150 | Val Loss: 0.1122 | Val Accuracy: 0.9518 | Val Precision: 0.9547 | Val F1: 0.9532
+Epoch: 11 |  Train Loss: 0.0203 | Val Loss: 0.1034 | Val Accuracy: 0.9577 | Val Precision: 0.9637 | Val F1: 0.9605
+Epoch: 12 |  Train Loss: 0.0258 | Val Loss: 0.1065 | Val Accuracy: 0.9586 | Val Precision: 0.9680 | Val F1: 0.9628
+Early stopping all'epoca: 12
+Fold 1/3 | Val Loss: 0.10649892501533031 | Val Accuracy: 0.9586376547813416 | Val Precision: 0.9679834842681885
+Training autolr_reg_step3. Epochs: 30 | Learning Rate: 0.001 | Batch Size: 64 | Loss Function: CrossEntropyLoss | Optimizer: Adam
+Epoch: 0 |  Train Loss: 0.1407 | Val Loss: 0.1064 | Val Accuracy: 0.9695 | Val Precision: 0.9767 | Val F1: 0.9728
+Epoch: 1 |  Train Loss: 0.1352 | Val Loss: 0.0915 | Val Accuracy: 0.9717 | Val Precision: 0.9620 | Val F1: 0.9660
+Epoch: 2 |  Train Loss: 0.0689 | Val Loss: 0.1142 | Val Accuracy: 0.9580 | Val Precision: 0.9447 | Val F1: 0.9493
+Epoch: 3 |  Train Loss: 0.0434 | Val Loss: 0.0415 | Val Accuracy: 0.9873 | Val Precision: 0.9836 | Val F1: 0.9853
+Epoch: 4 |  Train Loss: 0.0265 | Val Loss: 0.0362 | Val Accuracy: 0.9823 | Val Precision: 0.9833 | Val F1: 0.9828
+Epoch: 5 |  Train Loss: 0.0195 | Val Loss: 0.0377 | Val Accuracy: 0.9892 | Val Precision: 0.9912 | Val F1: 0.9902
+Epoch: 6 |  Train Loss: 0.0358 | Val Loss: 0.0313 | Val Accuracy: 0.9902 | Val Precision: 0.9902 | Val F1: 0.9902
+Epoch: 7 |  Train Loss: 0.0186 | Val Loss: 0.0533 | Val Accuracy: 0.9814 | Val Precision: 0.9795 | Val F1: 0.9804
+Epoch: 8 |  Train Loss: 0.0247 | Val Loss: 0.0375 | Val Accuracy: 0.9912 | Val Precision: 0.9893 | Val F1: 0.9902
+Epoch: 9 |  Train Loss: 0.0298 | Val Loss: 0.0306 | Val Accuracy: 0.9951 | Val Precision: 0.9951 | Val F1: 0.9951
+Epoch: 10 |  Train Loss: 0.0228 | Val Loss: 0.0342 | Val Accuracy: 0.9892 | Val Precision: 0.9912 | Val F1: 0.9902
+Epoch: 11 |  Train Loss: 0.0194 | Val Loss: 0.0258 | Val Accuracy: 0.9911 | Val Precision: 0.9942 | Val F1: 0.9926
+Epoch: 12 |  Train Loss: 0.0210 | Val Loss: 0.0367 | Val Accuracy: 0.9833 | Val Precision: 0.9874 | Val F1: 0.9852
+Epoch: 13 |  Train Loss: 0.0242 | Val Loss: 0.0346 | Val Accuracy: 0.9872 | Val Precision: 0.9882 | Val F1: 0.9877
+Epoch: 14 |  Train Loss: 0.0234 | Val Loss: 0.0379 | Val Accuracy: 0.9872 | Val Precision: 0.9882 | Val F1: 0.9877
+Epoch: 15 |  Train Loss: 0.0268 | Val Loss: 0.0465 | Val Accuracy: 0.9804 | Val Precision: 0.9804 | Val F1: 0.9804
+Early stopping all'epoca: 15
+Fold 2/3 | Val Loss: 0.04646505508571863 | Val Accuracy: 0.9803531765937805 | Val Precision: 0.9803531765937805
+Training autolr_reg_step3. Epochs: 30 | Learning Rate: 0.001 | Batch Size: 64 | Loss Function: CrossEntropyLoss | Optimizer: Adam
+Epoch: 0 |  Train Loss: 0.0818 | Val Loss: 0.1189 | Val Accuracy: 0.9632 | Val Precision: 0.9589 | Val F1: 0.9598
+Epoch: 1 |  Train Loss: 0.0521 | Val Loss: 0.2054 | Val Accuracy: 0.9215 | Val Precision: 0.9432 | Val F1: 0.9273
+Epoch: 2 |  Train Loss: 0.0757 | Val Loss: 0.0734 | Val Accuracy: 0.9769 | Val Precision: 0.9807 | Val F1: 0.9785
+Epoch: 3 |  Train Loss: 0.0156 | Val Loss: 0.0257 | Val Accuracy: 0.9874 | Val Precision: 0.9889 | Val F1: 0.9881
+Epoch: 4 |  Train Loss: 0.0241 | Val Loss: 0.0561 | Val Accuracy: 0.9831 | Val Precision: 0.9836 | Val F1: 0.9834
+Epoch: 5 |  Train Loss: 0.0165 | Val Loss: 0.0240 | Val Accuracy: 0.9888 | Val Precision: 0.9875 | Val F1: 0.9881
+Epoch: 6 |  Train Loss: 0.0267 | Val Loss: 0.0516 | Val Accuracy: 0.9810 | Val Precision: 0.9810 | Val F1: 0.9810
+Epoch: 7 |  Train Loss: 0.0223 | Val Loss: 0.0306 | Val Accuracy: 0.9931 | Val Precision: 0.9926 | Val F1: 0.9929
+Epoch: 8 |  Train Loss: 0.0234 | Val Loss: 0.0327 | Val Accuracy: 0.9862 | Val Precision: 0.9853 | Val F1: 0.9857
+Epoch: 9 |  Train Loss: 0.0175 | Val Loss: 0.0184 | Val Accuracy: 0.9900 | Val Precision: 0.9910 | Val F1: 0.9905
+Epoch: 10 |  Train Loss: 0.0118 | Val Loss: 0.0394 | Val Accuracy: 0.9857 | Val Precision: 0.9857 | Val F1: 0.9857
+Epoch: 11 |  Train Loss: 0.0180 | Val Loss: 0.0240 | Val Accuracy: 0.9905 | Val Precision: 0.9905 | Val F1: 0.9905
+Epoch: 12 |  Train Loss: 0.0159 | Val Loss: 0.0283 | Val Accuracy: 0.9862 | Val Precision: 0.9853 | Val F1: 0.9857
+Epoch: 13 |  Train Loss: 0.0099 | Val Loss: 0.0255 | Val Accuracy: 0.9910 | Val Precision: 0.9901 | Val F1: 0.9905
+Early stopping all'epoca: 13
+Fold 3/3 | Val Loss: 0.02553528979686754 | Val Accuracy: 0.9909719228744507 | Val Precision: 0.9900727868080139
+Cross Validation Results for autolr_reg_step3:
+Val Loss: 0.05875044929174086
+Val Accuracy: 0.973209818204244
+Val Precision: 0.9771655400594076
+Cross-validation completed in 78287.86 seconds
