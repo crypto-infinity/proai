@@ -453,6 +453,48 @@ class Trainer:
     Manages training and evaluation of a deep neural network.
     """
 
+    NA_MESSAGE = "NA"
+
+    @staticmethod
+    def _compute_classification_metrics(exp:Experiment, verbose=False):
+        """
+        Compute metrics. Internal method for fit and evaluate.
+
+        Params:
+            exp: Experiment: the experiment to get values from
+        """
+
+        # Store metrics values
+        if "accuracy" in exp.metrics:
+            accuracy = exp.val_metrics_objects["accuracy"].compute()
+            exp.val_accuracy_values.append(accuracy)
+        else:
+            accuracy = Trainer.NA_MESSAGE
+        
+        if "precision" in exp.metrics:
+            precision = exp.val_metrics_objects["precision"].compute()
+            exp.val_precision_values.append(precision)
+        else:
+            precision = Trainer.NA_MESSAGE
+
+        if "f1" in exp.metrics:
+            f1 = exp.val_metrics_objects["f1"].compute()
+            exp.val_f1_values.append(f1)
+        else:
+            f1 = Trainer.NA_MESSAGE
+
+        if "recall" in exp.metrics:
+            recall = exp.val_metrics_objects["recall"].compute()
+            exp.val_recall_values.append(recall)
+        else:
+            recall = Trainer.NA_MESSAGE
+
+        if verbose:
+            print(f"Metrics. Accuracy: {accuracy}, Precision: {precision}, F1: {f1}, recall: {recall}.")
+
+        return accuracy, precision, f1, recall
+
+
     @staticmethod
     def fit(exp:Experiment, train_dl, val_dl, verbose=True):
         """
@@ -541,26 +583,23 @@ class Trainer:
             exp.epoch_count.append(epoch)
 
             # Store metrics values
-            if "accuracy" in exp.metrics:
-                exp.val_accuracy_values.append(exp.val_metrics_objects["accuracy"].compute())
-            
-            if "precision" in exp.metrics:
-                exp.val_precision_values.append(exp.val_metrics_objects["precision"].compute())
-
-            if "f1" in exp.metrics:
-                exp.val_f1_values.append(exp.val_metrics_objects["f1"].compute())
-
-            if "recall" in exp.metrics:
-                exp.val_recall_values.append(exp.val_metrics_objects["recall"].compute())
+            epoch_val_accuracy, epoch_val_precision, epoch_val_f1, epoch_val_recall = Trainer._compute_classification_metrics(exp)
 
             # Print metrics
             if verbose:
-                print(f"Epoch: {epoch} |  Train Loss: {exp.train_loss_values[-1]:.4f} | Val Loss: {exp.val_loss_values[-1]:.4f} | Val Accuracy: {exp.val_accuracy_values[-1]:.4f} | Val Precision: {exp.val_precision_values[-1]:.4f} | Val F1: {exp.val_f1_values[-1]:.4f}")
+                print(f"""Epoch: {epoch} |  Train Loss: {exp.train_loss_values[-1]:.4f} | 
+                      Val Loss: {exp.val_loss_values[-1]:.4f} | 
+                      Val Accuracy: {epoch_val_accuracy} | 
+                      Val Precision: {epoch_val_precision} | 
+                      Val F1: {epoch_val_f1} | 
+                      Val Recall: {epoch_val_recall}"""
+                      )
 
             # LR Step, if applicable
             if exp.lr_scheduler:
                 lr_scheduler.step()
 
+            # Early Stopping if set
             if exp.use_early_stopping:
                 exp.early_stopping(loss_val/len(val_dl), exp.model)
                 if exp.early_stopping.early_stop:
@@ -588,6 +627,10 @@ class Trainer:
                 The accuracy of the model on the test set.
             precision: float
                 The precision of the model on the test set.
+            f1: float
+                The F1 Score of the model on the test set.
+            Recall: float
+                The recall score of the model on the test set.
         """
         
         exp.model.eval()
@@ -609,14 +652,13 @@ class Trainer:
                     exp.val_metrics_objects[metric].update(y_pred, y)
 
         # Store metrics values
-        accuracy = exp.val_metrics_objects["accuracy"].compute()
-        precision = exp.val_metrics_objects["precision"].compute()
+        epoch_accuracy, epoch_precision, epoch_f1, epoch_recall = Trainer._compute_classification_metrics(exp)
 
         # Reset metrics
         for i, metric in enumerate(exp.val_metrics_objects):
             exp.val_metrics_objects[metric].reset()
 
-        return loss_test/len(testloader), accuracy, precision
+        return loss_test/len(testloader), epoch_accuracy, epoch_precision, epoch_f1, epoch_recall
     
     def predict(exp:Experiment, testloader):
         """
@@ -702,6 +744,8 @@ class CrossValidation():
             cross_val_loss = []
             cross_val_accuracy = []
             cross_val_precision = []
+            cross_val_f1 = []
+            cross_val_recall = []
 
             for fold, (train_idx, val_idx) in enumerate(kf.split(self.train_ds)):
 
@@ -723,21 +767,33 @@ class CrossValidation():
                 # Training models for this fold
                 Trainer.fit(exp, train_dl_split, val_dl_split, verbose=self.verbose)
 
-                # Evaluate the model on the validation set
-                val_loss, accuracy, precision = Trainer.evaluate(exp, val_dl_split)
+                # Evaluate the model on the validation set (val metrics)
+                val_loss, accuracy, precision, f1, recall = Trainer.evaluate(exp, val_dl_split)
 
                 cross_val_loss.append(float(val_loss))
-                cross_val_accuracy.append(float(accuracy.cpu()) if torch.is_tensor(accuracy) else float(accuracy))
-                cross_val_precision.append(float(precision.cpu()) if torch.is_tensor(precision) else float(precision))
+
+                if accuracy is not Trainer.NA_MESSAGE:
+                    cross_val_accuracy.append(float(accuracy.cpu()) if torch.is_tensor(accuracy) else float(accuracy))
+
+                if precision is not Trainer.NA_MESSAGE:
+                    cross_val_precision.append(float(precision.cpu()) if torch.is_tensor(precision) else float(precision))
+
+                if f1 is not Trainer.NA_MESSAGE:
+                    cross_val_f1.append(float(f1.cpu()) if torch.is_tensor(f1) else float(f1))
+
+                if recall is not Trainer.NA_MESSAGE:
+                    cross_val_recall.append(float(recall.cpu()) if torch.is_tensor(recall) else float(recall))
 
                 if self.verbose:
-                    print(f"Fold {fold+1}/{self.n_splits} | Val Loss: {exp.val_loss_values[-1]} | Val Accuracy: {exp.val_accuracy_values[-1]} | Val Precision: {exp.val_precision_values[-1]}")
+                    print(f"Fold {fold+1}/{self.n_splits} | Val Loss: {val_loss} | Val Accuracy: {accuracy} | Val Precision: {precision} | Val F1: {f1} | Val Recall: {recall}")
 
             # Compute average metrics for this experiment
             experiment_results[exp.name] = {
                 "val_loss": np.mean(cross_val_loss),
                 "val_accuracy": np.mean(cross_val_accuracy),
-                "val_precision": np.mean(cross_val_precision)
+                "val_precision": np.mean(cross_val_precision),
+                "val_f1": np.mean(cross_val_f1),
+                "val_recall": np.mean(cross_val_recall)
             }
 
             if self.verbose:
@@ -745,6 +801,8 @@ class CrossValidation():
                 print(f"Val Loss: {experiment_results[exp.name]['val_loss']}")
                 print(f"Val Accuracy: {experiment_results[exp.name]['val_accuracy']}")
                 print(f"Val Precision: {experiment_results[exp.name]['val_precision']}")
+                print(f"Val F1: {experiment_results[exp.name]['val_f1']}")
+                print(f"Val Recall: {experiment_results[exp.name]['val_recall']}")
 
         return experiment_results
 
