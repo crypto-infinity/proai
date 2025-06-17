@@ -2,3 +2,4 @@ gymnasium
 matplotlib
 numpy
 box2d
+gym-idsgame==1.0.12
