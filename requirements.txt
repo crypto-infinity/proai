@@ -5,3 +5,6 @@ box2d
 gym-idsgame==1.0.12
 scikit-learn
 pandas
+torch
+cv2
+torchsummary
