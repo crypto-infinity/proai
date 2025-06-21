@@ -28,10 +28,12 @@ class RLHelper:
             int: Selected action.
         """
         if random.random() > epsilon:
-            with torch.no_grad():
+            with torch.no_grad(): 
+                #EXPLOITATION
                 state = torch.FloatTensor(state).unsqueeze(0).to(device)
                 return online_net(state).argmax(1).item()
         else:
+            #EXPLORATION
             return random.randrange(n_actions)
 
     @staticmethod
