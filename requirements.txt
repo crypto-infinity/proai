@@ -7,3 +7,4 @@ scipy
 unidecode
 transformers
 bertviz
+datasets
