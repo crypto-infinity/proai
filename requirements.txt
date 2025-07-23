@@ -8,3 +8,10 @@ unidecode
 transformers
 bertviz
 datasets
+loralib
+sentencepiece
+langchain
+bitsandbytes
+accelerate
+xformers
+einops
