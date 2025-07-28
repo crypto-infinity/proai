@@ -17,4 +17,5 @@ xformers
 einops
 albumentations
 tiktoken
-flash-attn
+flash-attn==2.8.0.post2
+diffusers
