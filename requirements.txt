@@ -19,3 +19,5 @@ albumentations
 tiktoken
 flash-attn==2.8.0.post2
 diffusers
+ignite
+pytorch-ignite
