@@ -8,3 +8,4 @@ shap
 captum
 torch
 torchvision
+torchmetrics
