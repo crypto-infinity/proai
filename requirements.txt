@@ -9,3 +9,4 @@ captum
 torch
 torchvision
 torchmetrics
+albumentations
