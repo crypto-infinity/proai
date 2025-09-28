@@ -11,3 +11,4 @@ torchvision
 torchmetrics
 torchsummary
 albumentations
+PyALE
