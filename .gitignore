@@ -1,3 +1,5 @@
 .venv
-data
 dnnhelper
+dataset
+models
+data
